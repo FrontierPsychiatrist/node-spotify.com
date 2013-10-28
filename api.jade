@@ -1,0 +1,288 @@
+extends base/layout
+block vars
+  - var active='api'
+block scripts
+  script(type='text/javascript', src='js/jquery.min.js')
+  script(type='text/javascript', src='js/bootstrap.min.js')
+  script(type='text/javascript', src='js/prettify.js')
+block stylesheets
+  link(rel='stylesheet', href='css/prettify.css', type='text/css')
+block content
+  .row
+    .span2.sidebar
+      ul.nav.nav-list.affix
+        li
+          a(href='#spotify') Spotify object
+        li
+          a(href='#events') Events
+        li
+          a(href='#playlist') Playlists
+        li
+          a(href='#player') Player
+        li
+          a(href='#track') Tracks
+        li
+          a(href='#album') Albums
+        li
+          a(href='#artist') Artists
+        li
+          a(href='#search') Search
+    .span10
+      div.page-header
+        h1 node.js API
+      p As every other nodeJS module you just require node-spotify to use it.
+      pre.prettyprint
+        |var spotify = require('spotify');
+      p This will create a spotify session in an extra thread in the background, but it won't login or do anything else.
+      p Unless specifically mentioned, properties of objects are not writeable (you can't change a track name in Spotify).
+
+      div.page-header
+        h2
+          a#spotify The spotify object
+      h3 string rememberedUser()
+      pre.prettyprint
+        |var rememberedUser = spotify.rememberedUser();
+        |console.log(remeberedUser);
+        |//your@email.com
+      p Returns the name of the remebered user if present, <code>undefined</code> otherwise.
+      h3 void login( string username, string password, bool remember, bool useRemembered )
+      pre.prettyprint
+        |spotify.login('myusername', 'mypassword', true, false);
+      p Starts a spotify session and logs in. Facebook login is possible. The user must have a spotify premium account.
+        |If <code>remember</code> is set to true, the user will be remembered an can relogin the next time. If
+        |<code>useRemembered</code> is set to true, the remembered user will be used.
+      h3
+        a#getPlaylists playlist[] getPlaylists()
+      pre.prettyprint
+        |var playlists = spotify.getPlaylists();
+      p Returns all <a href="#playlist">playlists</a> for the current user. If the user is not logged in, an empty list is returned.
+      h3 void ready( function callback )
+      pre.prettyprint
+        |var playlists;
+        |spotify.ready( function() {
+        |   playlists = spotify.getPlaylists();
+        |});
+      p Set a callback that is executed after the login to spotify has succeeded and the root playlistcontainer is loaded.
+      h3 void playlists.on( string eventname, function callback )
+      pre.prettyprint
+        |spotify.playlists.on(events.playlist_name_change, function() {
+        |   console.log('New playlist name: ' + this.name);
+        |});
+      p Register a callback for <b>all</b> playlists for a certain <a href="#events">event</a>. The callback is called
+        |in the context of the playlist, so <code>this</code> is the playlist.
+      h3 player player
+      p See the description of <a href="#player">player</a>.
+      h3 void logout()
+      pre.prettyprint
+        |spotify.logout();
+      p Logs the user out.
+      h3
+        a#searchCtor search Search( string searchText, optional int offset, optional int limit )
+      p This is a constructor for the <a href="#search">search</a> object. All of the four entities <a href="#track">track</a>
+        |, <a href="#album">album</a>, <a href="#artist">artist</a> and <a href="#playlist">playlist</a> are searched. For each
+        |there is a limit of the number of items to be returned by the search and a offset to start from. The constructor takes
+        |global values for these but they can be set individually on the returned object.
+      pre.prettyprint
+        |var search = new spotify.Search('godspeed you black emperor', 2, 10);
+      h3 <a href='#playlist'>playlist</a> getStarred()
+      p Returns the starred playlist
+      pre.prettyprint
+        |var starredPlaylist = spotify.getStarred();
+
+      div.page-header
+        h2
+          a#events Events
+        .alert events for playlists are not working at the moment
+        p The following objects all have the methods "on" and "off" to un/register functions to events: <code>playlist, track, player, album</code>
+          |The events will be called from within the native module.
+        p The following events are available:
+        pre.prettyprint
+          |var events = {
+          |  /* Playlists */
+          |  playlist_renamed: 'playlist_renamed',
+          |  playlist_tracks_changed: 'playlist_tracks_changed',
+          |
+          |  /* player */
+          |  player_end_of_track: 'player_end_of_track',
+          |  player_second_in_song: 'player_second_in_song'
+          |}
+        p In general you register to an event like this:
+        pre.prettyprint
+          |object.on(event.name, function() {
+          |  console.log(this); /* "this" will be "object" when the callback is called */
+          |}
+        p Descriptions for the events can be found in the corresponding objects.
+
+      div.page-header
+        h2
+          a#playlist Playlists
+      .alert events for playlists are not working at the moment
+      p The playlist objects are availabe via <a href="#getPlaylists">getPlaylists()</a>.
+      pre.prettyprint
+        |{
+        |   id: 3,
+        |   name: 'Rock music',
+        |   link: 'spotify:user:1234567890:playlist:6nruasfjdkMMLOas'
+        |}
+      h3 string name
+      p The name of the playlist.
+      h3 string link
+      p The spotify link to the playlist
+      h3 int id
+      p Although named id, this is not really an id. It's the position of the playlist in the playlist container, which can change
+        |if a new playlist is added. Since this is how libspotify handles it it is propagated to node.js.
+      h3
+        a#getTracks track[] getTracks()
+      pre.prettyprint
+        |var tracks = playlist.getTracks();
+      p Returns all <a href="#track">tracks</a> for the playlist. This is available as a method instead of a property
+        |so it can be controlled when a playlist fetches it tracks from spotify.
+      h3 string getImageBase64()
+      p Returns the playlist image (if it has one) as a base64 encoded jpeg.
+
+      div.page-header
+        h2
+          a#player Player
+      p The player object does not wrap a type of libspotify. It is the central object to play tracks. It is accessible
+        |via <code>spotify.player</code>.
+      pre.prettyprint
+        |{
+        |   currentSecond: 3
+        |}
+      h3 void play(track)
+      pre.prettyprint
+        |var track = playlist.getTracks()[0];
+        |spotify.player.play(track);
+      p Plays the given track to the end.
+      h3 void stop()
+      pre.prettyprint
+        |spotify.player.stop();
+      p Stop playing
+      h3 void pause()
+      pre.prettyprint
+        |spotify.player.pause();
+      p Pause playing
+      h3 void resume()
+      pre.prettyprint
+        |spotify.player.resume();
+      p Resume playing
+      h3 void seek(int second)
+      p Seek to the given second on the currently playing track.
+      pre.prettyprint
+        |spotify.player.seek(98);
+      h3 int currentSecond
+      p The the current second of the song playing.
+      h3 events
+      p The following events will be called in the player object:
+        ul
+          li <code>player_second_in_song</code>
+          pre.prettyprint
+            |spotify.player.on(events.player_second_in_song, function() {
+            |   console.log('Currently at second: ' + this.currentSecond);
+            |});
+          li <code>player_end_of_track</code>
+          pre.prettyprint
+            |spotify.player.on(events.player_end_of_track, function() {
+            |   currentTrack++;
+            |   playNextTrack();
+            |});
+
+      div.page-header
+        h2
+          a#track Tracks
+      p Tracks can be acquired by calling the <a href="#getTracks">getTracks()</a> method on a <a href="#playlist">playlist</a>
+      pre.prettyprint
+        |{
+        |   name: 'Treat Me Mean, I Need The Reputation',
+        |   artists: [ { name: 'Xploding Plastix', ...} ],
+        |   album: { name: 'Amateur Girlfriend Go Proskirt Agent', ... },
+        |   starred: true,
+        |   popularity: 35,
+        |   duration: 219,
+        |   link: 'spotify:track:05J2999043FFDSVFT'
+        |}
+      h3 string name
+      p The name of the track
+      h3 album album
+      p The <a href="#album">album</a> of the track
+      h3 artist[] artists
+      p All <a href="#artist">artists</a> for this track
+      h3 boolean starred
+      p True if the track is starred. This property is settable.
+      h3 int popularity
+      p The popularity of the song in Spotify.
+      h3 int duration
+      p The duration of the song in seconds.
+      h3 string link
+      p The spotify link to the track
+
+      div.page-header
+        h2
+          a#album Albums
+      pre.prettyprint
+        |{
+        |   name: 'Songs For The Deaf',
+        |   link: 'spotify:album:25534TTSDVfkap22f23'
+        |}
+      h3 string name
+      p The name of the album
+      h3 string link
+      p The spotify link to the album
+      h3 string getCoverBase64()
+      p Returns a string representing the cover of the album which is a JPEG encoded in Base64. If no cover is loadable
+        |it returns <code>undefined</code>
+      pre.prettyprint
+        |var embeddedImage = 'data:image/jpeg;base64,' + album.getCoverBase64();
+
+      div.page-header
+        h2
+          a#artist Artists
+      pre.prettyprint
+        |{
+        |   name: 'The Avalanches'
+        |   link: 'spotify:artist:34958adg903fjdf02'
+        |}
+      h3 string name
+      p The name of the artist.
+      h3 string link
+      p The spotify link to the artist
+
+      div.page-header
+        h2
+          a#search Search
+      p A search object can be created using the <a href="#searchCtor">search constructor</a> in the spotify object.
+      pre.prettyprint
+        |{
+        |  trackOffset: 0, trackLimit: 10,
+        |  albumOffset: 0, albumLimit: 10,
+        |  artistOffset: 0, artistLimit: 10,
+        |  totalTracks: 212, totalAlbums: 11, totalArtists: 4, totalPlaylists: 25,
+        |  playlistOffset: 0, playlistOffset, 10,
+        |  link: 'spotify:search:godspeed+you+black+emperor'
+        |  didYouMean: 'godsmack'
+        |}
+      h3 int (track/album/artist/playlist)Offset
+      p The offset to use for the search of the corresponding item. E.g. if you want the last 5 tracks when 10 tracks
+        |are found in total you set trackOffset to 5 and trackLimit to 5. This property is settable.
+      h3 int (track/album/artist/playlist)Limit
+      p Limits the number of corresponding items in the search. This property is settable.
+      h3 int total(Tracks/Albums/Artists/Playlists
+      p The total number of items found.
+      h3 string link
+      p The spotify link to the search
+      h3 string didYouMean
+      p The spotify did-you-mean text
+      h3 <a href="#track">track[]</a> getTracks()
+      p Returns the tracks found in the search.
+      h3 <a href="#album">album[]</a> getAlbums()
+      p Returns the albums found in the search.
+      h3 <a href="#artist">artist[]</a> getArtists()
+      p Returns the artists found in the search
+      h3 <a href="#playlist">playlist[]</a> getPlaylists()
+      p Returns the playlists found in the search.
+  script(type='text/javascript')
+    !function ($) {
+        $(function(){
+            window.prettyPrint && prettyPrint()
+        })
+    }(window.jQuery)

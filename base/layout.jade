@@ -1,0 +1,31 @@
+doctype 5
+- var active = 'home'
+- var pages = {users: 'Users/Downloads', programmers: 'Programmers', api: 'node.js API', impressum: 'Impressum'}
+block vars
+html
+    head
+        link(rel='stylesheet', href='css/bootstrap.min.css', media='screen', type='text/css')
+        link(rel='stylesheet', href='css/main.css', media='screen', type='text/css')
+        meta(name='viewport', content='width=device-width, initial-scale=1.0')
+        meta(http-equiv='Content-Type', content='text/html', charset='utf-8')
+        title node-spotify: #{active}
+        block scripts
+        block stylesheets
+    body(data-spy='scroll', data-target='.sidebar')
+        .navbar
+            .navbar-inner
+                a.brand(href="index.html") Home
+                ul.nav
+                    each name, page in pages
+                        if page == active
+                            li.active
+                                a(href="#{page}.html")=name
+                        else
+                            li
+                                a(href="#{page}.html")=name
+                a(href='demo/index.html').btn.btn-success.pull-right Try it!
+        .container
+            block content
+        footer.footer
+            div.container
+                p node-spotify by FrontierPsychiatrist

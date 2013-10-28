@@ -1,0 +1,68 @@
+<!DOCTYPE html><html><head><link rel="stylesheet" href="css/bootstrap.min.css" media="screen" type="text/css"><link rel="stylesheet" href="css/main.css" media="screen" type="text/css"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta http-equiv="Content-Type" content="text/html" charset="utf-8"><title>node-spotify: api</title><script type="text/javascript" src="js/jquery.min.js"></script><script type="text/javascript" src="js/bootstrap.min.js"></script><script type="text/javascript" src="js/prettify.js"></script><link rel="stylesheet" href="css/prettify.css" type="text/css"></head><body data-spy="scroll" data-target=".sidebar"><div class="navbar"><div class="navbar-inner"><a href="index.html" class="brand">Home</a><ul class="nav"><li><a href="users.html">Users/Downloads</a></li><li><a href="programmers.html">Programmers</a></li><li class="active"><a href="api.html">node.js API</a></li><li><a href="impressum.html">Impressum</a></li></ul><a href="demo/index.html" class="btn btn-success pull-right">Try it!</a></div></div><div class="container"><div class="row"><div class="span2 sidebar"><ul class="nav nav-list affix"><li><a href="#spotify">Spotify object</a></li><li><a href="#events">Events</a></li><li><a href="#playlist">Playlists</a></li><li><a href="#player">Player</a></li><li><a href="#track">Tracks</a></li><li><a href="#album">Albums</a></li><li><a href="#artist">Artists</a></li><li><a href="#search">Search</a></li></ul></div><div class="span10"><div class="page-header"><h1>node.js API</h1></div><p>As every other nodeJS module you just require node-spotify to use it.</p><pre class="prettyprint">var spotify = require('spotify');</pre><p>This will create a spotify session in an extra thread in the background, but it won't login or do anything else.</p><p>Unless specifically mentioned, properties of objects are not writeable (you can't change a track name in Spotify).</p><div class="page-header"><h2><a id="spotify">The spotify object</a></h2></div><h3>string rememberedUser()</h3><pre class="prettyprint">var rememberedUser = spotify.rememberedUser();
+console.log(remeberedUser);
+//your@email.com</pre><p>Returns the name of the remebered user if present, <code>undefined</code> otherwise.</p><h3>void login( string username, string password, bool remember, bool useRemembered )</h3><pre class="prettyprint">spotify.login('myusername', 'mypassword', true, false);</pre><p>Starts a spotify session and logs in. Facebook login is possible. The user must have a spotify premium account.
+If <code>remember</code> is set to true, the user will be remembered an can relogin the next time. If
+<code>useRemembered</code> is set to true, the remembered user will be used.</p><h3><a id="getPlaylists">playlist[] getPlaylists()</a></h3><pre class="prettyprint">var playlists = spotify.getPlaylists();</pre><p>Returns all <a href="#playlist">playlists</a> for the current user. If the user is not logged in, an empty list is returned.</p><h3>void ready( function callback )</h3><pre class="prettyprint">var playlists;
+spotify.ready( function() {
+  playlists = spotify.getPlaylists();
+});</pre><p>Set a callback that is executed after the login to spotify has succeeded and the root playlistcontainer is loaded.</p><h3>void playlists.on( string eventname, function callback )</h3><pre class="prettyprint">spotify.playlists.on(events.playlist_name_change, function() {
+  console.log('New playlist name: ' + this.name);
+});</pre><p>Register a callback for <b>all</b> playlists for a certain <a href="#events">event</a>. The callback is called
+in the context of the playlist, so <code>this</code> is the playlist.</p><h3>player player</h3><p>See the description of <a href="#player">player</a>.</p><h3>void logout()</h3><pre class="prettyprint">spotify.logout();</pre><p>Logs the user out.</p><h3><a id="searchCtor">search Search( string searchText, optional int offset, optional int limit )</a></h3><p>This is a constructor for the <a href="#search">search</a> object. All of the four entities <a href="#track">track</a>
+, <a href="#album">album</a>, <a href="#artist">artist</a> and <a href="#playlist">playlist</a> are searched. For each
+there is a limit of the number of items to be returned by the search and a offset to start from. The constructor takes
+global values for these but they can be set individually on the returned object.</p><pre class="prettyprint">var search = new spotify.Search('godspeed you black emperor', 2, 10);</pre><h3><a href='#playlist'>playlist</a> getStarred()</h3><p>Returns the starred playlist</p><pre class="prettyprint">var starredPlaylist = spotify.getStarred();</pre><div class="page-header"><h2><a id="events">Events</a></h2><div class="alert">events for playlists are not working at the moment</div><p>The following objects all have the methods "on" and "off" to un/register functions to events: <code>playlist, track, player, album</code>
+The events will be called from within the native module.</p><p>The following events are available:</p><pre class="prettyprint">var events = {
+ /* Playlists */
+ playlist_renamed: 'playlist_renamed',
+ playlist_tracks_changed: 'playlist_tracks_changed',
+|
+ /* player */
+ player_end_of_track: 'player_end_of_track',
+ player_second_in_song: 'player_second_in_song'
+}</pre><p>In general you register to an event like this:</p><pre class="prettyprint">object.on(event.name, function() {
+ console.log(this); /* "this" will be "object" when the callback is called */
+}</pre><p>Descriptions for the events can be found in the corresponding objects.</p></div><div class="page-header"><h2><a id="playlist">Playlists</a></h2></div><div class="alert">events for playlists are not working at the moment</div><p>The playlist objects are availabe via <a href="#getPlaylists">getPlaylists()</a>.</p><pre class="prettyprint">{
+  id: 3,
+  name: 'Rock music',
+  link: 'spotify:user:1234567890:playlist:6nruasfjdkMMLOas'
+}</pre><h3>string name</h3><p>The name of the playlist.</p><h3>string link</h3><p>The spotify link to the playlist</p><h3>int id</h3><p>Although named id, this is not really an id. It's the position of the playlist in the playlist container, which can change
+if a new playlist is added. Since this is how libspotify handles it it is propagated to node.js.</p><h3><a id="getTracks">track[] getTracks()</a></h3><pre class="prettyprint">var tracks = playlist.getTracks();</pre><p>Returns all <a href="#track">tracks</a> for the playlist. This is available as a method instead of a property
+so it can be controlled when a playlist fetches it tracks from spotify.</p><h3>string getImageBase64()</h3><p>Returns the playlist image (if it has one) as a base64 encoded jpeg.</p><div class="page-header"><h2><a id="player">Player</a></h2></div><p>The player object does not wrap a type of libspotify. It is the central object to play tracks. It is accessible
+via <code>spotify.player</code>.</p><pre class="prettyprint">{
+  currentSecond: 3
+}</pre><h3>void play(track)</h3><pre class="prettyprint">var track = playlist.getTracks()[0];
+spotify.player.play(track);</pre><p>Plays the given track to the end.</p><h3>void stop()</h3><pre class="prettyprint">spotify.player.stop();</pre><p>Stop playing</p><h3>void pause()</h3><pre class="prettyprint">spotify.player.pause();</pre><p>Pause playing</p><h3>void resume()</h3><pre class="prettyprint">spotify.player.resume();</pre><p>Resume playing</p><h3>void seek(int second)</h3><p>Seek to the given second on the currently playing track.</p><pre class="prettyprint">spotify.player.seek(98);</pre><h3>int currentSecond</h3><p>The the current second of the song playing.</p><h3>events</h3><p>The following events will be called in the player object:<ul><li><code>player_second_in_song</code></li><pre class="prettyprint">spotify.player.on(events.player_second_in_song, function() {
+  console.log('Currently at second: ' + this.currentSecond);
+});</pre><li><code>player_end_of_track</code></li><pre class="prettyprint">spotify.player.on(events.player_end_of_track, function() {
+  currentTrack++;
+  playNextTrack();
+});</pre></ul></p><div class="page-header"><h2><a id="track">Tracks</a></h2></div><p>Tracks can be acquired by calling the <a href="#getTracks">getTracks()</a> method on a <a href="#playlist">playlist</a></p><pre class="prettyprint">{
+  name: 'Treat Me Mean, I Need The Reputation',
+  artists: [ { name: 'Xploding Plastix', ...} ],
+  album: { name: 'Amateur Girlfriend Go Proskirt Agent', ... },
+  starred: true,
+  popularity: 35,
+  duration: 219,
+  link: 'spotify:track:05J2999043FFDSVFT'
+}</pre><h3>string name</h3><p>The name of the track</p><h3>album album</h3><p>The <a href="#album">album</a> of the track</p><h3>artist[] artists</h3><p>All <a href="#artist">artists</a> for this track</p><h3>boolean starred</h3><p>True if the track is starred. This property is settable.</p><h3>int popularity</h3><p>The popularity of the song in Spotify.</p><h3>int duration</h3><p>The duration of the song in seconds.</p><h3>string link</h3><p>The spotify link to the track</p><div class="page-header"><h2><a id="album">Albums</a></h2></div><pre class="prettyprint">{
+  name: 'Songs For The Deaf',
+  link: 'spotify:album:25534TTSDVfkap22f23'
+}</pre><h3>string name</h3><p>The name of the album</p><h3>string link</h3><p>The spotify link to the album</p><h3>string getCoverBase64()</h3><p>Returns a string representing the cover of the album which is a JPEG encoded in Base64. If no cover is loadable
+it returns <code>undefined</code></p><pre class="prettyprint">var embeddedImage = 'data:image/jpeg;base64,' + album.getCoverBase64();</pre><div class="page-header"><h2><a id="artist">Artists</a></h2></div><pre class="prettyprint">{
+  name: 'The Avalanches'
+  link: 'spotify:artist:34958adg903fjdf02'
+}</pre><h3>string name</h3><p>The name of the artist.</p><h3>string link</h3><p>The spotify link to the artist</p><div class="page-header"><h2><a id="search">Search</a></h2></div><p>A search object can be created using the <a href="#searchCtor">search constructor</a> in the spotify object.</p><pre class="prettyprint">{
+ trackOffset: 0, trackLimit: 10,
+ albumOffset: 0, albumLimit: 10,
+ artistOffset: 0, artistLimit: 10,
+ totalTracks: 212, totalAlbums: 11, totalArtists: 4, totalPlaylists: 25,
+ playlistOffset: 0, playlistOffset, 10,
+ link: 'spotify:search:godspeed+you+black+emperor'
+ didYouMean: 'godsmack'
+}</pre><h3>int (track/album/artist/playlist)Offset</h3><p>The offset to use for the search of the corresponding item. E.g. if you want the last 5 tracks when 10 tracks
+are found in total you set trackOffset to 5 and trackLimit to 5. This property is settable.</p><h3>int (track/album/artist/playlist)Limit</h3><p>Limits the number of corresponding items in the search. This property is settable.</p><h3>int total(Tracks/Albums/Artists/Playlists</h3><p>The total number of items found.</p><h3>string link</h3><p>The spotify link to the search</p><h3>string didYouMean</h3><p>The spotify did-you-mean text</p><h3><a href="#track">track[]</a> getTracks()</h3><p>Returns the tracks found in the search.</p><h3><a href="#album">album[]</a> getAlbums()</h3><p>Returns the albums found in the search.</p><h3><a href="#artist">artist[]</a> getArtists()</h3><p>Returns the artists found in the search</p><h3><a href="#playlist">playlist[]</a> getPlaylists()</h3><p>Returns the playlists found in the search.</p></div></div><script type="text/javascript">!function ($) {
+    $(function(){
+        window.prettyPrint && prettyPrint()
+    })
+}(window.jQuery)</script></div><footer class="footer"><div class="container"><p>node-spotify by FrontierPsychiatrist</p></div></footer></body></html>

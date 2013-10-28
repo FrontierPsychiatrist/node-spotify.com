@@ -1,0 +1,37 @@
+extends base/layout
+block vars
+  - var active='users'
+block content
+  h2 Users guide
+  h3 Installing
+  p Download the zip file matching your system
+    ul
+      li
+        a(href='#') Raspberry Pi (tbd)
+      li
+        a(href='#') Mac OSX (tbd)
+      li
+        a(href='#') Linux x86 (tbd)
+  h4 Starting using the command line
+  pre
+    |you@your-machine ~/Downloads % pwd
+    |/Users/you/Downloads
+    |you@your-machine ~/Downloads % ls
+    |node-spotify-v0.0.1.zip
+    |you@your-machine ~/Downloads % unzip node-spotify-v0.0.1.zip
+    |...
+    |you@your-machine ~/Downloads % cd node-spotify
+    |you@your-machine ~/Downloads/node-spotify % ls
+    |frontend lib node_modules node node-spotify-backend.js start.sh
+    |you@your-machine ~/Downloads/node-spotify % ./start.sh
+    | - socket.io started
+  p Now open a browser and go to <a href="http://localhost:25000">http://localhost:25000</a>. If you want to access
+    |node-spotify from another machine, you have to exchange localhost for the IP adress or hostname of the machine you're running
+    |node-spotify on.
+
+  h4 Starting without the commandline
+  p TBD
+
+  h3 FAQ
+    h5 When starting via commandline I get "start.sh not executable"
+    p <pre>chmod +x start.sh

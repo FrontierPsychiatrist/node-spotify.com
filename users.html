@@ -1,0 +1,13 @@
+<!DOCTYPE html><html><head><link rel="stylesheet" href="css/bootstrap.min.css" media="screen" type="text/css"><link rel="stylesheet" href="css/main.css" media="screen" type="text/css"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta http-equiv="Content-Type" content="text/html" charset="utf-8"><title>node-spotify: users</title></head><body data-spy="scroll" data-target=".sidebar"><div class="navbar"><div class="navbar-inner"><a href="index.html" class="brand">Home</a><ul class="nav"><li class="active"><a href="users.html">Users/Downloads</a></li><li><a href="programmers.html">Programmers</a></li><li><a href="api.html">node.js API</a></li><li><a href="impressum.html">Impressum</a></li></ul><a href="demo/index.html" class="btn btn-success pull-right">Try it!</a></div></div><div class="container"><h2>Users guide</h2><h3>Installing</h3><p>Download the zip file matching your system<ul><li><a href="#">Raspberry Pi (tbd)</a></li><li><a href="#">Mac OSX (tbd)</a></li><li><a href="#">Linux x86 (tbd)</a></li></ul></p><h4>Starting using the command line</h4><pre>you@your-machine ~/Downloads % pwd
+/Users/you/Downloads
+you@your-machine ~/Downloads % ls
+node-spotify-v0.0.1.zip
+you@your-machine ~/Downloads % unzip node-spotify-v0.0.1.zip
+...
+you@your-machine ~/Downloads % cd node-spotify
+you@your-machine ~/Downloads/node-spotify % ls
+frontend lib node_modules node node-spotify-backend.js start.sh
+you@your-machine ~/Downloads/node-spotify % ./start.sh
+- socket.io started</pre><p>Now open a browser and go to <a href="http://localhost:25000">http://localhost:25000</a>. If you want to access
+node-spotify from another machine, you have to exchange localhost for the IP adress or hostname of the machine you're running
+node-spotify on.</p><h4>Starting without the commandline</h4><p>TBD</p><h3>FAQ<h5>When starting via commandline I get "start.sh not executable"</h5><p><pre>chmod +x start.sh</p></h3></div><footer class="footer"><div class="container"><p>node-spotify by FrontierPsychiatrist</p></div></footer></body></html>
