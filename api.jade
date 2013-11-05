@@ -92,7 +92,6 @@ block content
       div.page-header
         h2
           a#events Events
-        .alert events for playlists are not working at the moment
         p The following objects all have the methods "on" and "off" to un/register functions to events: <code>playlist, track, player, album</code>
           |The events will be called from within the native module.
         p The following events are available:
@@ -100,7 +99,7 @@ block content
           |var events = {
           |  /* Playlists */
           |  playlist_renamed: 'playlist_renamed',
-          |  playlist_tracks_changed: 'playlist_tracks_changed',
+          |  playlist_tracks_added: 'playlist_tracks_added',
           |
           |  /* player */
           |  player_end_of_track: 'player_end_of_track',
@@ -108,15 +107,14 @@ block content
           |}
         p In general you register to an event like this:
         pre.prettyprint
-          |object.on(event.name, function() {
-          |  console.log(this); /* "this" will be "object" when the callback is called */
+          |object.on(event.name, function(err, object) {
+          |  console.log(object);
           |}
         p Descriptions for the events can be found in the corresponding objects.
 
       div.page-header
         h2
           a#playlist Playlists
-      .alert events for playlists are not working at the moment
       p The playlist objects are availabe via <a href="#getPlaylists">getPlaylists()</a>.
       pre.prettyprint
         |{
@@ -139,6 +137,21 @@ block content
         |so it can be controlled when a playlist fetches it tracks from spotify.
       h3 string getImageBase64()
       p Returns the playlist image (if it has one) as a base64 encoded jpeg.
+      h3 events
+      p The following events are available for playlists:
+        ul
+          li <code>playlist_renamed</code>
+          pre.prettyprint
+            |spotify.playlists.on('playlist_renamed', function(err, playlist) {
+            |  console.log(playlist.name);
+            |});
+          p Fired when the playlist is renamed.
+          li <code>playlist_tracks_added</code>
+          pre.prettyprint
+            |playlist.on('playlist_renamed', function(err, tracks) {
+            |  console.log(tracks);
+            |});
+          p This callback will get the tracks that are added to the playlist as the object.
 
       div.page-header
         h2
@@ -177,12 +190,12 @@ block content
         ul
           li <code>player_second_in_song</code>
           pre.prettyprint
-            |spotify.player.on(events.player_second_in_song, function() {
-            |   console.log('Currently at second: ' + this.currentSecond);
+            |spotify.player.on(events.player_second_in_song, function(err, player) {
+            |   console.log('Currently at second: ' + player.currentSecond);
             |});
           li <code>player_end_of_track</code>
           pre.prettyprint
-            |spotify.player.on(events.player_end_of_track, function() {
+            |spotify.player.on(events.player_end_of_track, function(err, player) {
             |   currentTrack++;
             |   playNextTrack();
             |});
@@ -280,6 +293,15 @@ block content
       p Returns the artists found in the search
       h3 <a href="#playlist">playlist[]</a> getPlaylists()
       p Returns the playlists found in the search.
+      h3 void execute( function callback )
+      p Executes the search. When the search is ready, the callback will be called.
+      pre.prettyprint
+        |var search = new spotify.Search('test');
+        |search.execute( function(err, searchResult) {
+        |  console.log(searchResult);
+        |});
+      p searchResult has the same type as search, all fields are available.
+
   script(type='text/javascript')
     !function ($) {
         $(function(){

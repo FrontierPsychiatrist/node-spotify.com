@@ -18,37 +18,7 @@ block content
         |<a href="https://github.com/FrontierPsychiatrist/node-spotify" target="_blank">github</a>
 
     h2 Architecture
-    p In general, all complex operations are to be kept in the C++ code. The module should expose a simple as possible
-        |API to node.js. This makes it easy to use for someone who does not have knowledge of libspotify. Also
-        |it is easier to change, add or update libspotify calls when they are not just wrapped to JavaScript functions
-        |but are kept together in small C++ methods/functions.
-    p There are four types of objects to consider:
-        ul
-            li Spotify objects. These objects wrap a libspotify type like playlist or track and expose methods like getTracks or
-                |properties like "name". Most of them may only be constructed in the spotify thread.
-            li NodeWrapped objects. <code>NodeWrapped</code> is a base class for objects that should be available in JavaScript.
-                |It defines convenient methods to save callbacks and execute them. Most NodeWrapped objects save a delegate
-                |spotify object and expose its methods to the user.
-            li <code>SpotifyService</code> is a singleton which starts and holds the Spotify thread. It must always be used
-                |if a call to the Spotify library is to be executed.
-            li Spotify Callbacks. Spotify allows the attachment to a variety of callbacks. The callback definitions for node-spotify
-                |are available in the namespace <code>spotify</code>.
-
-    h2 Threads
-    p There are two threads which concern a node-spotify developer.
-        ul
-            li the node.js thread started when node.js loads
-            li the Spotify thread
-        |These two threads need to communicate a lot. Both "want" to execute code concerning the other thread, but both aren't
-        |threadsafe.
-
-    h3 Executing libspotify calls
-    p When starting a Spotify session, a new thread gets created that will run an endless loop which will be called the spotify
-        |loop. The loop periodically needs to call <code>sp_session_process_events</code>. You can find this loop in the class
-        |<code>SpotifyService</code>
-    p The JavaScript app for node.js needs to execute calls to the API of libspotify, e.g. to login or to get all playlists.
-        |The developers of libspotify state that it isn't threadsafe and that <b>all</b> calls to it must come from the same thread
-        |(the one running the main Spotify loop). This is done via C++11 lambdas.
+    p As of version 0.3.0 this section needs to be completely rewritten.
 
     script(type='text/javascript')
         !function ($) {

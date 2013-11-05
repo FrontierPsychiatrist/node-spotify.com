@@ -11,30 +11,34 @@ spotify.ready( function() {
 in the context of the playlist, so <code>this</code> is the playlist.</p><h3>player player</h3><p>See the description of <a href="#player">player</a>.</p><h3>void logout()</h3><pre class="prettyprint">spotify.logout();</pre><p>Logs the user out.</p><h3><a id="searchCtor">search Search( string searchText, optional int offset, optional int limit )</a></h3><p>This is a constructor for the <a href="#search">search</a> object. All of the four entities <a href="#track">track</a>
 , <a href="#album">album</a>, <a href="#artist">artist</a> and <a href="#playlist">playlist</a> are searched. For each
 there is a limit of the number of items to be returned by the search and a offset to start from. The constructor takes
-global values for these but they can be set individually on the returned object.</p><pre class="prettyprint">var search = new spotify.Search('godspeed you black emperor', 2, 10);</pre><h3><a href='#playlist'>playlist</a> getStarred()</h3><p>Returns the starred playlist</p><pre class="prettyprint">var starredPlaylist = spotify.getStarred();</pre><div class="page-header"><h2><a id="events">Events</a></h2><div class="alert">events for playlists are not working at the moment</div><p>The following objects all have the methods "on" and "off" to un/register functions to events: <code>playlist, track, player, album</code>
+global values for these but they can be set individually on the returned object.</p><pre class="prettyprint">var search = new spotify.Search('godspeed you black emperor', 2, 10);</pre><h3><a href='#playlist'>playlist</a> getStarred()</h3><p>Returns the starred playlist</p><pre class="prettyprint">var starredPlaylist = spotify.getStarred();</pre><div class="page-header"><h2><a id="events">Events</a></h2><p>The following objects all have the methods "on" and "off" to un/register functions to events: <code>playlist, track, player, album</code>
 The events will be called from within the native module.</p><p>The following events are available:</p><pre class="prettyprint">var events = {
  /* Playlists */
  playlist_renamed: 'playlist_renamed',
- playlist_tracks_changed: 'playlist_tracks_changed',
+ playlist_tracks_added: 'playlist_tracks_added',
 |
  /* player */
  player_end_of_track: 'player_end_of_track',
  player_second_in_song: 'player_second_in_song'
-}</pre><p>In general you register to an event like this:</p><pre class="prettyprint">object.on(event.name, function() {
- console.log(this); /* "this" will be "object" when the callback is called */
-}</pre><p>Descriptions for the events can be found in the corresponding objects.</p></div><div class="page-header"><h2><a id="playlist">Playlists</a></h2></div><div class="alert">events for playlists are not working at the moment</div><p>The playlist objects are availabe via <a href="#getPlaylists">getPlaylists()</a>.</p><pre class="prettyprint">{
+}</pre><p>In general you register to an event like this:</p><pre class="prettyprint">object.on(event.name, function(err, object) {
+ console.log(object);
+}</pre><p>Descriptions for the events can be found in the corresponding objects.</p></div><div class="page-header"><h2><a id="playlist">Playlists</a></h2></div><p>The playlist objects are availabe via <a href="#getPlaylists">getPlaylists()</a>.</p><pre class="prettyprint">{
   id: 3,
   name: 'Rock music',
   link: 'spotify:user:1234567890:playlist:6nruasfjdkMMLOas'
 }</pre><h3>string name</h3><p>The name of the playlist.</p><h3>string link</h3><p>The spotify link to the playlist</p><h3>int id</h3><p>Although named id, this is not really an id. It's the position of the playlist in the playlist container, which can change
 if a new playlist is added. Since this is how libspotify handles it it is propagated to node.js.</p><h3><a id="getTracks">track[] getTracks()</a></h3><pre class="prettyprint">var tracks = playlist.getTracks();</pre><p>Returns all <a href="#track">tracks</a> for the playlist. This is available as a method instead of a property
-so it can be controlled when a playlist fetches it tracks from spotify.</p><h3>string getImageBase64()</h3><p>Returns the playlist image (if it has one) as a base64 encoded jpeg.</p><div class="page-header"><h2><a id="player">Player</a></h2></div><p>The player object does not wrap a type of libspotify. It is the central object to play tracks. It is accessible
+so it can be controlled when a playlist fetches it tracks from spotify.</p><h3>string getImageBase64()</h3><p>Returns the playlist image (if it has one) as a base64 encoded jpeg.</p><h3>events</h3><p>The following events are available for playlists:<ul><li><code>playlist_renamed</code></li><pre class="prettyprint">spotify.playlists.on('playlist_renamed', function(err, playlist) {
+ console.log(playlist.name);
+});</pre><p>Fired when the playlist is renamed.</p><li><code>playlist_tracks_added</code></li><pre class="prettyprint">playlist.on('playlist_renamed', function(err, tracks) {
+ console.log(tracks);
+});</pre><p>This callback will get the tracks that are added to the playlist as the object.</p></ul></p><div class="page-header"><h2><a id="player">Player</a></h2></div><p>The player object does not wrap a type of libspotify. It is the central object to play tracks. It is accessible
 via <code>spotify.player</code>.</p><pre class="prettyprint">{
   currentSecond: 3
 }</pre><h3>void play(track)</h3><pre class="prettyprint">var track = playlist.getTracks()[0];
-spotify.player.play(track);</pre><p>Plays the given track to the end.</p><h3>void stop()</h3><pre class="prettyprint">spotify.player.stop();</pre><p>Stop playing</p><h3>void pause()</h3><pre class="prettyprint">spotify.player.pause();</pre><p>Pause playing</p><h3>void resume()</h3><pre class="prettyprint">spotify.player.resume();</pre><p>Resume playing</p><h3>void seek(int second)</h3><p>Seek to the given second on the currently playing track.</p><pre class="prettyprint">spotify.player.seek(98);</pre><h3>int currentSecond</h3><p>The the current second of the song playing.</p><h3>events</h3><p>The following events will be called in the player object:<ul><li><code>player_second_in_song</code></li><pre class="prettyprint">spotify.player.on(events.player_second_in_song, function() {
-  console.log('Currently at second: ' + this.currentSecond);
-});</pre><li><code>player_end_of_track</code></li><pre class="prettyprint">spotify.player.on(events.player_end_of_track, function() {
+spotify.player.play(track);</pre><p>Plays the given track to the end.</p><h3>void stop()</h3><pre class="prettyprint">spotify.player.stop();</pre><p>Stop playing</p><h3>void pause()</h3><pre class="prettyprint">spotify.player.pause();</pre><p>Pause playing</p><h3>void resume()</h3><pre class="prettyprint">spotify.player.resume();</pre><p>Resume playing</p><h3>void seek(int second)</h3><p>Seek to the given second on the currently playing track.</p><pre class="prettyprint">spotify.player.seek(98);</pre><h3>int currentSecond</h3><p>The the current second of the song playing.</p><h3>events</h3><p>The following events will be called in the player object:<ul><li><code>player_second_in_song</code></li><pre class="prettyprint">spotify.player.on(events.player_second_in_song, function(err, player) {
+  console.log('Currently at second: ' + player.currentSecond);
+});</pre><li><code>player_end_of_track</code></li><pre class="prettyprint">spotify.player.on(events.player_end_of_track, function(err, player) {
   currentTrack++;
   playNextTrack();
 });</pre></ul></p><div class="page-header"><h2><a id="track">Tracks</a></h2></div><p>Tracks can be acquired by calling the <a href="#getTracks">getTracks()</a> method on a <a href="#playlist">playlist</a></p><pre class="prettyprint">{
@@ -61,7 +65,10 @@ it returns <code>undefined</code></p><pre class="prettyprint">var embeddedImage 
  link: 'spotify:search:godspeed+you+black+emperor'
  didYouMean: 'godsmack'
 }</pre><h3>int (track/album/artist/playlist)Offset</h3><p>The offset to use for the search of the corresponding item. E.g. if you want the last 5 tracks when 10 tracks
-are found in total you set trackOffset to 5 and trackLimit to 5. This property is settable.</p><h3>int (track/album/artist/playlist)Limit</h3><p>Limits the number of corresponding items in the search. This property is settable.</p><h3>int total(Tracks/Albums/Artists/Playlists</h3><p>The total number of items found.</p><h3>string link</h3><p>The spotify link to the search</p><h3>string didYouMean</h3><p>The spotify did-you-mean text</p><h3><a href="#track">track[]</a> getTracks()</h3><p>Returns the tracks found in the search.</p><h3><a href="#album">album[]</a> getAlbums()</h3><p>Returns the albums found in the search.</p><h3><a href="#artist">artist[]</a> getArtists()</h3><p>Returns the artists found in the search</p><h3><a href="#playlist">playlist[]</a> getPlaylists()</h3><p>Returns the playlists found in the search.</p></div></div><script type="text/javascript">!function ($) {
+are found in total you set trackOffset to 5 and trackLimit to 5. This property is settable.</p><h3>int (track/album/artist/playlist)Limit</h3><p>Limits the number of corresponding items in the search. This property is settable.</p><h3>int total(Tracks/Albums/Artists/Playlists</h3><p>The total number of items found.</p><h3>string link</h3><p>The spotify link to the search</p><h3>string didYouMean</h3><p>The spotify did-you-mean text</p><h3><a href="#track">track[]</a> getTracks()</h3><p>Returns the tracks found in the search.</p><h3><a href="#album">album[]</a> getAlbums()</h3><p>Returns the albums found in the search.</p><h3><a href="#artist">artist[]</a> getArtists()</h3><p>Returns the artists found in the search</p><h3><a href="#playlist">playlist[]</a> getPlaylists()</h3><p>Returns the playlists found in the search.</p><h3>void execute( function callback )</h3><p>Executes the search. When the search is ready, the callback will be called.</p><pre class="prettyprint">var search = new spotify.Search('test');
+search.execute( function(err, searchResult) {
+ console.log(searchResult);
+});</pre><p>searchResult has the same type as search, all fields are available.</p></div></div><script type="text/javascript">!function ($) {
     $(function(){
         window.prettyPrint && prettyPrint()
     })
