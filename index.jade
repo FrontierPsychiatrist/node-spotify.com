@@ -1,34 +1,47 @@
 extends base/layout
+block scripts
+  script(type='text/javascript', src='js/jquery.min.js')
+  script(type='text/javascript', src='js/prettify.js')
+block stylesheets
+  link(rel='stylesheet', href='css/prettify.css', type='text/css')
 block content
   div.page-header
     h1 node-spotify
-  h2 What is it?
-  p
-    |node-spotify allows you to control <a href="http://www.spotify.com" target="_blank">Spotify</a> via your browser! This is extremely
-    |useful if you want to play music on one device and control it via another device. A great example is the
-    |<a href="http://www.raspberrypi.org">Raspberry Pi</a>. Imagine attaching it to your stereo and then controling the music via your
-    |smarthpone! This is what expensive devices from other manufactures can do (e.g. a Sonos), but it runs on a cheap Raspberry Pi.
+  div.well
+    h2 spotify in your node.js app
+    pre.prettyprint
+      |var spotify = require('spotify')({ appkeyFile: 'spotify_appkeyFile.key' });
+      |spotify.ready( function() {
+      |  var starredTracks = spotify.getStarred().getTracks();
+      |  spotify.player.play(starredTracks[0]);
+      |});
+      |spotify.login('user', 'password', false, false);
+
   h2 Great, what do i need?
   p To use node-spotify you need
     ul
-      li A Spotify premium membership (sorry, this is a constraint for using libspotify)
-      li A computer running Linux or OSX with internet access (again sorry, no Windows support at this time)<br />
-        |Preferrably, this is a Raspberry Pi that is attached to your stereo.
-      li A modern webbrowser (<a href="http://www.google.com/chrome" target="_blank">Chrome</a>,
-        |<a href="http://www.mozilla.org/en-US/firefox/new/" target="_blank">Firefox</a>)
-  h2 Getting started
-  p For installation, downloads and running instructions please go to the <a href="users.html">users section</a>
+      li A Spotify premium membership (sorry, this is a constraint for using libspotify). You need to acquire an
+        |appkey, too (<a href="https://developer.spotify.com/technologies/libspotify/#application-keys">here</a>).
+      li A computer running Linux or OSX with internet access (again sorry, no Windows support at this time)
+      li node.js and libspotify installed
   h2 Download
-  p Current version: v0.3.1. This is only the node.js module.
+  p Current version: v0.4.1.
   ul
     li
       a(href='#') Raspberry Pi (tbd)
     li
-      a(href='/builds/0.3.1/OSX/spotify.node') Mac OSX
+      a(href='/builds/0.4.1/node-spotfy-0.4.1-OSX.zip') Mac OSX
     li
-      a(href='#') Linux x86 (tbd)
+      a(href='/builds/0.4.1/node-spotify-0.4.1-Linux.zip') Linux x86
 
   h2 Source Code
   p The source code is available at
     |<a href="https://github.com/FrontierPsychiatrist/node-spotify" target="_blank">github</a>
   p Have a look at the <a href="programmers.html">programmers section</a> too!
+
+  script(type='text/javascript')
+    !function ($) {
+      $(function(){
+        window.prettyPrint && prettyPrint()
+        })
+    }(window.jQuery)

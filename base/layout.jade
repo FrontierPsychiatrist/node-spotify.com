@@ -1,6 +1,6 @@
 doctype 5
 - var active = 'home'
-- var pages = {users: 'Users/Downloads', programmers: 'Programmers', api: 'node.js API', impressum: 'Impressum'}
+- var pages = {api: 'node.js API', programmers: 'Into the C++ code',  impressum: 'Impressum'}
 block vars
 html
     head
@@ -23,7 +23,7 @@ html
                         else
                             li
                                 a(href="#{page}.html")=name
-                a(href='demo/index.html').btn.btn-success.pull-right Try it!
+                //a(href='demo/index.html').btn.btn-success.pull-right Try it!
         .container
             block content
         footer.footer

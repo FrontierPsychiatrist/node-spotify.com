@@ -1,6 +1,53 @@
-<!DOCTYPE html><html><head><link rel="stylesheet" href="css/bootstrap.min.css" media="screen" type="text/css"><link rel="stylesheet" href="css/main.css" media="screen" type="text/css"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta http-equiv="Content-Type" content="text/html" charset="utf-8"><title>node-spotify: programmers</title><script type="text/javascript" src="js/jquery.min.js"></script><script type="text/javascript" src="js/prettify.js"></script><link rel="stylesheet" href="css/prettify.css" type="text/css"></head><body data-spy="scroll" data-target=".sidebar"><div class="navbar"><div class="navbar-inner"><a href="index.html" class="brand">Home</a><ul class="nav"><li><a href="users.html">Users/Downloads</a></li><li class="active"><a href="programmers.html">Programmers</a></li><li><a href="api.html">node.js API</a></li><li><a href="impressum.html">Impressum</a></li></ul><a href="demo/index.html" class="btn btn-success pull-right">Try it!</a></div></div><div class="container"><h1>Programmers section</h1><p>This section is for people who want to dive in the code of the node-spotify module for node.js
+<!DOCTYPE html><html><head><link rel="stylesheet" href="css/bootstrap.min.css" media="screen" type="text/css"><link rel="stylesheet" href="css/main.css" media="screen" type="text/css"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta http-equiv="Content-Type" content="text/html" charset="utf-8"><title>node-spotify: programmers</title><script type="text/javascript" src="js/jquery.min.js"></script><script type="text/javascript" src="js/prettify.js"></script><link rel="stylesheet" href="css/prettify.css" type="text/css"></head><body data-spy="scroll" data-target=".sidebar"><div class="navbar"><div class="navbar-inner"><a href="index.html" class="brand">Home</a><ul class="nav"><li><a href="api.html">node.js API</a></li><li class="active"><a href="programmers.html">Into the C++ code</a></li><li><a href="impressum.html">Impressum</a></li></ul><!--a(href='demo/index.html').btn.btn-success.pull-right Try it!--></div></div><div class="container"><h1>Programmers section</h1><p>This section is for people who want to dive in the code of the node-spotify module for node.js
 It's written in C++ (c++011 standard). The following libraries/frameworks are used and not further explained in this guide:<ul><li><a href="http://nodejs.org/api/addons.html">node.js native module development</a>, <a href="https://code.google.com/p/v8/">google's V8</a></li></li><li><a href="http://nikhilm.github.com/uvbook/introduction.html">libuv event handling</a>, <a href="https://computing.llnl.gov/tutorials/pthreads/">pthreads</a></li></li><li><a href="https://developer.spotify.com/technologies/libspotify/docs/12.1.45/">libspotify</a></li></li></ul></p><p>The source code is available at
-<a href="https://github.com/FrontierPsychiatrist/node-spotify" target="_blank">github</a></p><h2>Architecture</h2><p>As of version 0.3.0 this section needs to be completely rewritten.</p><script type="text/javascript">!function ($) {
+<a href="https://github.com/FrontierPsychiatrist/node-spotify" target="_blank">github</a></p><h2>Architecture</h2><h3>Class structure</h3><p>Two types of classes exist, Spotify classes (src/objects/spotify) and Node classes (src/objects/node). Node classes are in general the ones that
+provide the classes exported to node.js and Spotify classes call libspotify. A Node class normally has a weak pointer to an spotify class and can
+access spotify values in this way.</p><p>As a rule of thumb, a class whichs name starts with Node should never call a libspotify API function directly (although this is not true at the moment, see NodePlayer).</p><h5>Example</h5><pre class="prettyprint">//code behind track.name in Javascript:
+class NodeTrack {
+private:
+ std::shared_ptr&lt;Track&gt; track;
+public:
+ static Handle&lt;Value&gt; getName(Local&lt;String&gt; property, const AccessorInfo&amp; info); //will call track-&gt;name()
+};
+class Track {
+public:
+ std::string name(); //calls libspotify
+}</pre><h3>Spotify loop</h3><p>The spotify loop is implemented via libuv. libspotify requires that every five minutes or so the function <code>sp_session_process_events</code> must be called. This
+function must also be called when the <code>notify_main_thread</code> callback is triggered. If the callback is triggered, <code>uv_async</code> is used to notify the
+main thread that <code>sp_session_process_events</code> must be called. It must be called in the same thread that the <code>sp_session</code> was created, but <code>notify_main_thread</code>
+is called in another thread and so we cannot call it immediately. After the call to <code>sp_session_process_events</code> a <code>uv_timer</code> is set to call it again.</p><pre class="prettyprint">void SessionCallbacks::init() {
+ timer = std::unique_ptr<uv_timer_t>(new uv_timer_t());
+ notifyHandle = std::unique_ptr<uv_async_t>(new uv_async_t());
+ uv_async_init(uv_default_loop(), notifyHandle.get(), handleNotify);
+ uv_timer_init(uv_default_loop(), timer.get());
+}
+/**
+ * If the timer has run out this method will be called.
+ **/
+void SessionCallbacks::processEvents(uv_timer_t* timer, int status) {
+ handleNotify(notifyHandle.get(), 0);
+}
+/**
+ * This is a callback function that will be called by spotify.
+ **/
+void SessionCallbacks::notifyMainThread(sp_session* session) {
+ //effectively calls handleNotify in another thread
+ uv_async_send(notifyHandle.get());
+}
+/**
+ * async callback handle function for process events.
+ * This function will always be called in the thread in which the sp_session was created.
+ **/
+void SessionCallbacks::handleNotify(uv_async_t* handle, int status) {
+ uv_timer_stop(timer.get()); //a new timeout will be set at the end
+ int nextTimeout = 0;
+ while(nextTimeout == 0) {
+   sp_session_process_events(application->session, &nextTimeout);
+ }
+ uv_timer_start(timer.get(), &processEvents, nextTimeout, 0);
+}</pre><h2>FAQ</h2><h4>Aren't you leaking memory? Lots of <code>new Node...*</code>!</h4><p>No. All NodeObjects are created via <code>new</code>, but as soon as <code>->getV8Object()</code> is called and the resulting
+object is returned in a <code>HandleScope</code> the object is attached to the V8 runtime and can be garbage collected. Garbage
+collection will also delete the Node object.</p><script type="text/javascript">!function ($) {
     $(function(){
         window.prettyPrint && prettyPrint()
     })
