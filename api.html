@@ -27,11 +27,10 @@ The events will be called from within the native module.</p><p>The following eve
  playlist_tracks_added: 'playlist_tracks_added',
 |
  /* player */
- player_end_of_track: 'player_end_of_track',
- player_second_in_song: 'player_second_in_song'
+ player_end_of_track: 'player_end_of_track'
 }</pre><p>In general you register to an event like this:</p><pre class="prettyprint">object.on(event.name, function(err, object) {
  console.log(object);
-}</pre><p>Descriptions for the events can be found in the corresponding objects.</p><span class="alert alert-warning">The player_second_in_song event is currently disabled.</span><div class="page-header"><h2><a id="playlist">Playlists</a></h2></div><p>The playlist objects are availabe via <a href="#getPlaylists">getPlaylists()</a>.</p><pre class="prettyprint">{
+}</pre><p>Descriptions for the events can be found in the corresponding objects.</p><div class="page-header"><h2><a id="playlist">Playlists</a></h2></div><p>The playlist objects are availabe via <a href="#getPlaylists">getPlaylists()</a>.</p><pre class="prettyprint">{
   name: 'Rock music',
   link: 'spotify:user:1234567890:playlist:6nruasfjdkMMLOas'
 }</pre><h4>string name</h4><p>The name of the playlist.</p><h4>string link</h4><p>The spotify link to the playlist</p><h4><a id="getTracks">track[] getTracks()</a></h4><pre class="prettyprint">var tracks = playlist.getTracks();</pre><p>Returns all <a href="#track">tracks</a> for the playlist. This is available as a method instead of a property
@@ -43,12 +42,10 @@ so it can be controlled when a playlist fetches it tracks from spotify.</p><p>Th
 via <code>spotify.player</code>.</p><pre class="prettyprint">{
   currentSecond: 3
 }</pre><h4>void play(track)</h4><pre class="prettyprint">var track = playlist.getTracks()[0];
-spotify.player.play(track);</pre><p>Plays the given track to the end.</p><h4>void stop()</h4><pre class="prettyprint">spotify.player.stop();</pre><p>Stop playing</p><h4>void pause()</h4><pre class="prettyprint">spotify.player.pause();</pre><p>Pause playing</p><h4>void resume()</h4><pre class="prettyprint">spotify.player.resume();</pre><p>Resume playing</p><h4>void seek(int second)</h4><p>Seek to the given second on the currently playing track.</p><pre class="prettyprint">spotify.player.seek(98);</pre><h4>int currentSecond</h4><p>The the current second of the song playing.</p><h4>events</h4><p>The following events will be called in the player object:<ul><li><code>player_second_in_song</code></li><pre class="prettyprint">spotify.player.on(events.player_second_in_song, function(err, player) {
-  console.log('Currently at second: ' + player.currentSecond);
-});</pre><li><code>player_end_of_track</code></li><pre class="prettyprint">spotify.player.on(events.player_end_of_track, function(err, player) {
+spotify.player.play(track);</pre><p>Plays the given track to the end.</p><h4>void stop()</h4><pre class="prettyprint">spotify.player.stop();</pre><p>Stop playing</p><h4>void pause()</h4><pre class="prettyprint">spotify.player.pause();</pre><p>Pause playing</p><h4>void resume()</h4><pre class="prettyprint">spotify.player.resume();</pre><p>Resume playing</p><h4>void seek(int second)</h4><p>Seek to the given second on the currently playing track.</p><pre class="prettyprint">spotify.player.seek(98);</pre><h4>int currentSecond</h4><p>The the current second of the song playing.</p><h4>events</h4><p>The following events will be called in the player object:<ul><li><code>player_end_of_track</code></li><pre class="prettyprint">spotify.player.on(events.player_end_of_track, function(err, player) {
   currentTrack++;
   playNextTrack();
-});</pre></ul></p><span class="alert alert-warning">The player_second_in_song event is currently disabled</span><div class="page-header"><h2><a id="track">Tracks</a></h2></div><p>Tracks can be acquired by calling the <a href="#getTracks">getTracks()</a> method on a <a href="#playlist">playlist</a></p><pre class="prettyprint">{
+});</pre></ul></p><div class="page-header"><h2><a id="track">Tracks</a></h2></div><p>Tracks can be acquired by calling the <a href="#getTracks">getTracks()</a> method on a <a href="#playlist">playlist</a></p><pre class="prettyprint">{
   name: 'Treat Me Mean, I Need The Reputation',
   artists: [ { name: 'Xploding Plastix', ...} ],
   album: { name: 'Amateur Girlfriend Go Proskirt Agent', ... },

@@ -118,8 +118,7 @@ block content
         |  playlist_tracks_added: 'playlist_tracks_added',
         |
         |  /* player */
-        |  player_end_of_track: 'player_end_of_track',
-        |  player_second_in_song: 'player_second_in_song'
+        |  player_end_of_track: 'player_end_of_track'
         |}
       p In general you register to an event like this:
       pre.prettyprint
@@ -127,7 +126,6 @@ block content
         |  console.log(object);
         |}
       p Descriptions for the events can be found in the corresponding objects.
-      span.alert.alert-warning The player_second_in_song event is currently disabled.
 
       div.page-header
         h2
@@ -198,18 +196,12 @@ block content
       h4 events
       p The following events will be called in the player object:
         ul
-          li <code>player_second_in_song</code>
-          pre.prettyprint
-            |spotify.player.on(events.player_second_in_song, function(err, player) {
-            |   console.log('Currently at second: ' + player.currentSecond);
-            |});
           li <code>player_end_of_track</code>
           pre.prettyprint
             |spotify.player.on(events.player_end_of_track, function(err, player) {
             |   currentTrack++;
             |   playNextTrack();
             |});
-      span.alert.alert-warning The player_second_in_song event is currently disabled
 
       div.page-header
         h2
