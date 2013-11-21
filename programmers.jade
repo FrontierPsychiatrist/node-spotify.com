@@ -22,8 +22,12 @@ block content
     p Two types of classes exist, Spotify classes (src/objects/spotify) and Node classes (src/objects/node). Node classes are in general the ones that
       |provide the classes exported to node.js and Spotify classes call libspotify. A Node class normally has a weak pointer to an spotify class and can
       |access spotify values in this way.
-    p As a rule of thumb, a class whichs name starts with Node should never call a libspotify API function directly (although this is not true at the moment, see NodePlayer).
+    p As a rule of thumb, a class whichs name starts with Node should never call a libspotify API function directly.
     h5 Example
+    p The following javascript code
+    pre.prettyprint
+      |track.name
+    p needs this in C++
     pre.prettyprint
       |//code behind track.name in Javascript:
       |class NodeTrack {

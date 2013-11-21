@@ -2,7 +2,7 @@
 It's written in C++ (c++011 standard). The following libraries/frameworks are used and not further explained in this guide:<ul><li><a href="http://nodejs.org/api/addons.html">node.js native module development</a>, <a href="https://code.google.com/p/v8/">google's V8</a></li></li><li><a href="http://nikhilm.github.com/uvbook/introduction.html">libuv event handling</a>, <a href="https://computing.llnl.gov/tutorials/pthreads/">pthreads</a></li></li><li><a href="https://developer.spotify.com/technologies/libspotify/docs/12.1.45/">libspotify</a></li></li></ul></p><p>The source code is available at
 <a href="https://github.com/FrontierPsychiatrist/node-spotify" target="_blank">github</a></p><h2>Architecture</h2><h3>Class structure</h3><p>Two types of classes exist, Spotify classes (src/objects/spotify) and Node classes (src/objects/node). Node classes are in general the ones that
 provide the classes exported to node.js and Spotify classes call libspotify. A Node class normally has a weak pointer to an spotify class and can
-access spotify values in this way.</p><p>As a rule of thumb, a class whichs name starts with Node should never call a libspotify API function directly (although this is not true at the moment, see NodePlayer).</p><h5>Example</h5><pre class="prettyprint">//code behind track.name in Javascript:
+access spotify values in this way.</p><p>As a rule of thumb, a class whichs name starts with Node should never call a libspotify API function directly.</p><h5>Example</h5><p>The following javascript code</p><pre class="prettyprint">track.name</pre><p>needs this in C++</p><pre class="prettyprint">//code behind track.name in Javascript:
 class NodeTrack {
 private:
  std::shared_ptr&lt;Track&gt; track;
