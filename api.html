@@ -18,9 +18,9 @@ spotify.ready( function() {
 the callback will be called.</p><span class="alert alert-info">The callback will only be called if a javascript object of the playlist has been created.</span><h4><a href="#player">player</a> player</h4><p>See the description of <a href="#player">player</a>.</p><h4>void logout()</h4><pre class="prettyprint">spotify.logout();</pre><p>Logs the user out.</p><h4><a id="searchCtor">search Search( string searchText, optional int offset, optional int limit )</a></h4><p>This is a constructor for the <a href="#search">search</a> object. All of the four entities <a href="#track">track</a>
 , <a href="#album">album</a>, <a href="#artist">artist</a> and <a href="#playlist">playlist</a> are searched. For each
 there is a limit of the number of items to be returned by the search and a offset to start from. The constructor takes
-global values for these but they can be set individually on the returned object.</p><pre class="prettyprint">var search = new spotify.Search('godspeed you black emperor', 2, 10);</pre><h4>spotifyObject createFromLink( string link )</h4><p>Creates a spotify object for the given spotify link. Currently, tracks, artists and albums are supported.</p><pre class="prettyprint">var track = spotify.createFromLink('spotify:track:3SonaciCiY2VGnQpEkKdEv');
-var album = spotify.createFromLink('spotify:album:5N82AYJ3FG1znFz3EqJNMm');
-var artist = spotify.createFromLink('spotify:artist:6pmxr66tMAePxzOLfjGNcX');</pre><p>If the link is not valid, <code>Undefined</code> is returned.</p><div class="page-header"><h2><a id="events">Events</a></h2></div><p>The following objects all have the methods "on" and "off" to un/register functions to events: <code>playlist, track, player, album</code>
+global values for these but they can be set individually on the returned object.</p><pre class="prettyprint">var search = new spotify.Search('godspeed you black emperor', 2, 10);</pre><h4>spotifyObject createFromLink( string link )</h4><p>Creates a spotify object for the given spotify link. Currently, tracks, artists and albums are supported.</p><pre class="prettyprint">var track = spotify.createFromLink('spotify:track:05JqOBN6XW4eFUVQlgR0I3');
+var album = spotify.createFromLink('spotify:album:2rT82YYlV9UoxBYLIezkRq');
+var artist = spotify.createFromLink('spotify:artist:4svpOyfmQKuWpHLjgy4cdK');</pre><p>If the link is not valid, <code>Undefined</code> is returned.</p><div class="page-header"><h2><a id="events">Events</a></h2></div><p>The following objects all have the methods "on" and "off" to un/register functions to events: <code>playlist, track, player, album</code>
 The events will be called from within the native module.</p><p>The following events are available:</p><pre class="prettyprint">var events = {
  /* Playlists */
  playlist_renamed: 'playlist_renamed',
@@ -45,29 +45,28 @@ via <code>spotify.player</code>.</p><pre class="prettyprint">{
 spotify.player.play(track);</pre><p>Plays the given track to the end.</p><h4>void stop()</h4><pre class="prettyprint">spotify.player.stop();</pre><p>Stop playing</p><h4>void pause()</h4><pre class="prettyprint">spotify.player.pause();</pre><p>Pause playing</p><h4>void resume()</h4><pre class="prettyprint">spotify.player.resume();</pre><p>Resume playing</p><h4>void seek(int second)</h4><p>Seek to the given second on the currently playing track.</p><pre class="prettyprint">spotify.player.seek(98);</pre><h4>int currentSecond</h4><p>The the current second of the song playing.</p><h4>events</h4><p>The following events will be called in the player object:<ul><li><code>player_end_of_track</code></li><pre class="prettyprint">spotify.player.on(events.player_end_of_track, function(err, player) {
   currentTrack++;
   playNextTrack();
-});</pre></ul></p><div class="page-header"><h2><a id="track">Tracks</a></h2></div><p>Tracks can be acquired by calling the <a href="#getTracks">getTracks()</a> method on a <a href="#playlist">playlist</a></p><pre class="prettyprint">{
-  name: 'Treat Me Mean, I Need The Reputation',
-  artists: [ { name: 'Xploding Plastix', ...} ],
-  album: { name: 'Amateur Girlfriend Go Proskirt Agent', ... },
-  starred: true,
-  popularity: 35,
-  duration: 219,
-  link: 'spotify:track:05J2999043FFDSVFT'
-}</pre><h4>string name</h4><p>The name of the track</p><h4>album album</h4><p>The <a href="#album">album</a> of the track</p><h4>artist[] artists</h4><p>All <a href="#artist">artists</a> for this track</p><h4>boolean starred</h4><p>True if the track is starred. This property is settable.</p><h4>int popularity</h4><p>The popularity of the song in Spotify.</p><h4>int duration</h4><p>The duration of the song in seconds.</p><h4>string link</h4><p>The spotify link to the track</p><div class="page-header"><h2><a id="album">Albums</a></h2></div><pre class="prettyprint">{
-  name: 'Songs For The Deaf',
-  link: 'spotify:album:25534TTSDVfkap22f23'
-}</pre><h4>string name</h4><p>The name of the album</p><h4>string link</h4><p>The spotify link to the album</p><h4>string getCoverBase64()</h4><p>Returns a string representing the cover of the album which is a JPEG encoded in Base64. If no cover is loadable
-it returns <code>undefined</code></p><pre class="prettyprint">var embeddedImage = 'data:image/jpeg;base64,' + album.getCoverBase64();</pre><h4>void browse( function callback )</h4><p>Retrieve additional information for the album such as tracks and copyrights.</p><pre class="prettyprint">var album = spotify.createFromLink('spotify:album:5N82AYJ3FG1znFz3EqJNMm');
+});</pre></ul></p><div class="page-header"><h2><a id="track">Tracks</a></h2></div><p>Tracks can be acquired by calling the <a href="#getTracks">getTracks()</a> method on a <a href="#playlist">playlist</a></p><pre class="prettyprint">{ popularity: 40,
+ starred: true,
+ album:
+  { link: 'spotify:album:2rT82YYlV9UoxBYLIezkRq',
+    name: 'Lift Your Skinny Fists Like Antennas to Heaven' },
+ artists:
+  [ { link: 'spotify:artist:4svpOyfmQKuWpHLjgy4cdK',
+      name: 'Godspeed You! Black Emperor' } ],
+ duration: 1399,
+ link: 'spotify:track:05JqOBN6XW4eFUVQlgR0I3',
+ name: 'Murray Ostril:"They Don\'t Sleep Anymore On the Beach"'
+}</pre><h4> name: 'Murray Ostril:"They Don\'t Sleep Anymore On the Beach"' } string name</h4><p>The name of the track</p><h4>album album</h4><p>The <a href="#album">album</a> of the track</p><h4>artist[] artists</h4><p>All <a href="#artist">artists</a> for this track</p><h4>boolean starred</h4><p>True if the track is starred. This property is settable.</p><h4>int popularity</h4><p>The popularity of the song in Spotify.</p><h4>int duration</h4><p>The duration of the song in seconds.</p><h4>string link</h4><p>The spotify link to the track</p><div class="page-header"><h2><a id="album">Albums</a></h2></div><pre class="prettyprint">{ link: 'spotify:album:2rT82YYlV9UoxBYLIezkRq',
+ name: 'Lift Your Skinny Fists Like Antennas to Heaven' }</pre><h4>string name</h4><p>The name of the album</p><h4>string link</h4><p>The spotify link to the album</p><h4>string getCoverBase64()</h4><p>Returns a string representing the cover of the album which is a JPEG encoded in Base64. If no cover is loadable
+it returns <code>undefined</code></p><pre class="prettyprint">var embeddedImage = 'data:image/jpeg;base64,' + album.getCoverBase64();</pre><h4>void browse( function callback )</h4><p>Retrieve additional information for the album such as tracks and copyrights.</p><pre class="prettyprint">var album = spotify.createFromLink('spotify:album:2rT82YYlV9UoxBYLIezkRq');
 album.browse( function(err, browsedAlbum) {
  var tracks = browsedAlbum.tracks;
  var review = browsedAlbum.review;
  var copyrights = browsedAlbum.copyrights;
  var artist = browsedAlbum.artist;
-});</pre><p>The album will have these new properties even outside of the callback.</p><div class="page-header"><h2><a id="artist">Artists</a></h2></div><pre class="prettyprint">{
-  name: 'The Avalanches'
-  link: 'spotify:artist:34958adg903fjdf02'
-}</pre><h4>string name</h4><p>The name of the artist.</p><h4>string link</h4><p>The spotify link to the artist</p><h4>void browse( artistbrowse_type type, function callback )</h4><p>Retrieve additional information for the artist such as tracks, albums and similar artists. Available options for
-artistbrowse_type are spotify.ARTISTBROWSE_FULL, spotify.ARTISTBROWSE_NO_TRACKS and spotify.ARTISTBROWSE_NO_ALBUMS (includes no tracks).</p><pre class="prettyprint">var artist = spotify.createFromLink('spotify:artist:6pmxr66tMAePxzOLfjGNcX');
+});</pre><p>The album will have these new properties even outside of the callback.</p><div class="page-header"><h2><a id="artist">Artists</a></h2></div><pre class="prettyprint">{ link: 'spotify:artist:4svpOyfmQKuWpHLjgy4cdK',
+ name: 'Godspeed You! Black Emperor' }</pre><h4>string name</h4><p>The name of the artist.</p><h4>string link</h4><p>The spotify link to the artist</p><h4>void browse( artistbrowse_type type, function callback )</h4><p>Retrieve additional information for the artist such as tracks, albums and similar artists. Available options for
+artistbrowse_type are spotify.ARTISTBROWSE_FULL, spotify.ARTISTBROWSE_NO_TRACKS and spotify.ARTISTBROWSE_NO_ALBUMS (includes no tracks).</p><pre class="prettyprint">var artist = spotify.createFromLink('spotify:artist:4svpOyfmQKuWpHLjgy4cdK');
 artist.browse( spotify.ARTISTBROWSE_FULL, function(err, browsedArtist) {
  var tracks = browsedAartist.tracks;
  var tophitTracks = browsedArtist.tophitTracks;
@@ -81,7 +80,7 @@ only a few properties, but after it has been executed with <code>execute()</code
  artistOffset: 0, artistLimit: 10,
  playlistOffset: 0, playlistOffset, 10,
  //available after execute:
- totalTracks: 212, totalAlbums: 11, totalArtists: 4, totalPlaylists: 25,
+ totalTracks: 19, totalAlbums: 5, totalArtists: 1, totalPlaylists: 7,
  link: 'spotify:search:godspeed+you+black+emperor'
  didYouMean: 'godsmack',
  tracks: [], artists: [], albums: [], playlists: []

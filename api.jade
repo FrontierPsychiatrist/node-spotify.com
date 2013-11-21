@@ -100,9 +100,9 @@ block content
       h4 spotifyObject createFromLink( string link )
       p Creates a spotify object for the given spotify link. Currently, tracks, artists and albums are supported.
       pre.prettyprint
-        |var track = spotify.createFromLink('spotify:track:3SonaciCiY2VGnQpEkKdEv');
-        |var album = spotify.createFromLink('spotify:album:5N82AYJ3FG1znFz3EqJNMm');
-        |var artist = spotify.createFromLink('spotify:artist:6pmxr66tMAePxzOLfjGNcX');
+        |var track = spotify.createFromLink('spotify:track:05JqOBN6XW4eFUVQlgR0I3');
+        |var album = spotify.createFromLink('spotify:album:2rT82YYlV9UoxBYLIezkRq');
+        |var artist = spotify.createFromLink('spotify:artist:4svpOyfmQKuWpHLjgy4cdK');
       p If the link is not valid, <code>Undefined</code> is returned.
 
       div.page-header
@@ -208,16 +208,19 @@ block content
           a#track Tracks
       p Tracks can be acquired by calling the <a href="#getTracks">getTracks()</a> method on a <a href="#playlist">playlist</a>
       pre.prettyprint
-        |{
-        |   name: 'Treat Me Mean, I Need The Reputation',
-        |   artists: [ { name: 'Xploding Plastix', ...} ],
-        |   album: { name: 'Amateur Girlfriend Go Proskirt Agent', ... },
-        |   starred: true,
-        |   popularity: 35,
-        |   duration: 219,
-        |   link: 'spotify:track:05J2999043FFDSVFT'
+        |{ popularity: 40,
+        |  starred: true,
+        |  album:
+        |   { link: 'spotify:album:2rT82YYlV9UoxBYLIezkRq',
+        |     name: 'Lift Your Skinny Fists Like Antennas to Heaven' },
+        |  artists:
+        |   [ { link: 'spotify:artist:4svpOyfmQKuWpHLjgy4cdK',
+        |       name: 'Godspeed You! Black Emperor' } ],
+        |  duration: 1399,
+        |  link: 'spotify:track:05JqOBN6XW4eFUVQlgR0I3',
+        |  name: 'Murray Ostril:"They Don\'t Sleep Anymore On the Beach"'
         |}
-      h4 string name
+      h4  name: 'Murray Ostril:"They Don\'t Sleep Anymore On the Beach"' } string name
       p The name of the track
       h4 album album
       p The <a href="#album">album</a> of the track
@@ -236,10 +239,8 @@ block content
         h2
           a#album Albums
       pre.prettyprint
-        |{
-        |   name: 'Songs For The Deaf',
-        |   link: 'spotify:album:25534TTSDVfkap22f23'
-        |}
+        |{ link: 'spotify:album:2rT82YYlV9UoxBYLIezkRq',
+        |  name: 'Lift Your Skinny Fists Like Antennas to Heaven' }
       h4 string name
       p The name of the album
       h4 string link
@@ -252,7 +253,7 @@ block content
       h4 void browse( function callback )
       p Retrieve additional information for the album such as tracks and copyrights.
       pre.prettyprint
-        |var album = spotify.createFromLink('spotify:album:5N82AYJ3FG1znFz3EqJNMm');
+        |var album = spotify.createFromLink('spotify:album:2rT82YYlV9UoxBYLIezkRq');
         |album.browse( function(err, browsedAlbum) {
         |  var tracks = browsedAlbum.tracks;
         |  var review = browsedAlbum.review;
@@ -265,10 +266,8 @@ block content
         h2
           a#artist Artists
       pre.prettyprint
-        |{
-        |   name: 'The Avalanches'
-        |   link: 'spotify:artist:34958adg903fjdf02'
-        |}
+        |{ link: 'spotify:artist:4svpOyfmQKuWpHLjgy4cdK',
+        |  name: 'Godspeed You! Black Emperor' }
       h4 string name
       p The name of the artist.
       h4 string link
@@ -277,7 +276,7 @@ block content
       p Retrieve additional information for the artist such as tracks, albums and similar artists. Available options for
         |artistbrowse_type are spotify.ARTISTBROWSE_FULL, spotify.ARTISTBROWSE_NO_TRACKS and spotify.ARTISTBROWSE_NO_ALBUMS (includes no tracks).
       pre.prettyprint
-        |var artist = spotify.createFromLink('spotify:artist:6pmxr66tMAePxzOLfjGNcX');
+        |var artist = spotify.createFromLink('spotify:artist:4svpOyfmQKuWpHLjgy4cdK');
         |artist.browse( spotify.ARTISTBROWSE_FULL, function(err, browsedArtist) {
         |  var tracks = browsedAartist.tracks;
         |  var tophitTracks = browsedArtist.tophitTracks;
@@ -299,7 +298,7 @@ block content
         |  artistOffset: 0, artistLimit: 10,
         |  playlistOffset: 0, playlistOffset, 10,
         |  //available after execute:
-        |  totalTracks: 212, totalAlbums: 11, totalArtists: 4, totalPlaylists: 25,
+        |  totalTracks: 19, totalAlbums: 5, totalArtists: 1, totalPlaylists: 7,
         |  link: 'spotify:search:godspeed+you+black+emperor'
         |  didYouMean: 'godsmack',
         |  tracks: [], artists: [], albums: [], playlists: []
