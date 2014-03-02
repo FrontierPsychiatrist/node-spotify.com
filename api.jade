@@ -63,19 +63,29 @@ block content
       pre.prettyprint
        |var playlists;
        |spotify.ready( function() {
-       |  playlists = spotify.getPlaylists();
+       |  playlists = spotify.playlistContainer.getPlaylists();
        |});
       p Set a callback that is executed after the login to spotify has succeeded and the root playlistcontainer is loaded.
       h4
         a#getPlaylists playlist[] getPlaylists()
+      p
+        span.alert.alert-warning This method is marked as deprecated and will be removed. Use the <a href="#playlistContainer">playlist container</a>.
       pre.prettyprint
         |var playlists = spotify.getPlaylists();
       p Returns all <a href="#playlist">playlists</a> for the current user. If the user is not logged in, an empty list is returned.
+      p
+        span.alert.alert-danger It is inadvisable to call this method more than once.
+      p This can lead to callbacks on playlists being executed multiple times. You should get the playlists only once in the lifetime of your application.
       h4 <a href='#playlist'>playlist</a> getStarred()
+      p
+        span.alert.alert-warning This method is marked as deprecated and will be removed. Use the <a href="#playlistContainer">playlist container</a>.
       p Returns the starred playlist
       pre.prettyprint
         |var starredPlaylist = spotify.getStarred();
+      p
+        span.alert.alert-danger Do not call this method more than once.
       h4 void playlists.on( string eventname, function callback )
+      p This is kind of a static callback setter for playlist callbacks.
       pre.prettyprint
         |spotify.playlists.on(events.playlist_name_change, function(err, playlist) {
         |  console.log('New playlist name: ' + playlist.name);
@@ -104,6 +114,8 @@ block content
         |var album = spotify.createFromLink('spotify:album:2rT82YYlV9UoxBYLIezkRq');
         |var artist = spotify.createFromLink('spotify:artist:4svpOyfmQKuWpHLjgy4cdK');
       p If the link is not valid, <code>Undefined</code> is returned.
+      h4 <a href="#playlistContainer">playlistContainer</a> playlistContainer
+      p The root playlist container, i.e. the one of the user logged in. Contains methods to access and manage playlists.
 
       div.page-header
         h2
@@ -125,6 +137,21 @@ block content
         |  console.log(object);
         |}
       p Descriptions for the events can be found in the corresponding objects.
+
+      div.page-header
+        h2
+          a#playlistContainer Playlist container
+      h4 <a href="#playlist">playlist[]</a> getPlaylists()
+      p All playlists in this playlist container.
+      p
+        span.alert.alert-danger Do not call this method more than once
+      p This can lead to callbacks on playlists being executed multiple times. I hope to implement some caching mechanism in C++ that eliminates this issue.
+      h4 <a href="#playlist">playlist</a> getStarred()
+      p The starred playlist of this playlist container.
+      p
+        span.alert.alert-danger Do not call this method more than once.
+      h4 void addPlaylist(string name)
+      p Create a new playlist. You should access the new playlist via the playlist_added callback.
 
       div.page-header
         h2

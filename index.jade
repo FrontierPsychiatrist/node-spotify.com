@@ -12,7 +12,7 @@ block content
     pre.prettyprint
       |var spotify = require('spotify')({ appkeyFile: 'spotify_appkeyFile.key' });
       |spotify.ready( function() {
-      |  var starredTracks = spotify.getStarred().getTracks();
+      |  var starredTracks = spotify.playlistContainer.getStarred().getTracks();
       |  spotify.player.play(starredTracks[0]);
       |});
       |spotify.login('user', 'password', false, false);
