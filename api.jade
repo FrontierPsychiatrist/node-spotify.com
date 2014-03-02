@@ -108,7 +108,7 @@ block content
       div.page-header
         h2
           a#events Events
-      p The following objects all have the methods "on" and "off" to un/register functions to events: <code>playlist, track, player, album</code>
+      p The following objects all have the methods "on" and "off" to un/register functions to events: <code>playlist, player</code>
         |The events will be called from within the native module.
       p The following events are available:
       pre.prettyprint
@@ -116,7 +116,6 @@ block content
         |  /* Playlists */
         |  playlist_renamed: 'playlist_renamed',
         |  playlist_tracks_added: 'playlist_tracks_added',
-        |
         |  /* player */
         |  player_end_of_track: 'player_end_of_track'
         |}
@@ -170,7 +169,7 @@ block content
         |{
         |   currentSecond: 3
         |}
-      h4 void play(track)
+      h4 void play(<a href='#track'>track</a> track)
       pre.prettyprint
         |var track = playlist.getTracks()[0];
         |spotify.player.play(track);
@@ -220,7 +219,7 @@ block content
         |  link: 'spotify:track:05JqOBN6XW4eFUVQlgR0I3',
         |  name: 'Murray Ostril:"They Don\'t Sleep Anymore On the Beach"'
         |}
-      h4  name: 'Murray Ostril:"They Don\'t Sleep Anymore On the Beach"' } string name
+      h4 string name
       p The name of the track
       h4 album album
       p The <a href="#album">album</a> of the track
@@ -300,7 +299,7 @@ block content
         |  //available after execute:
         |  totalTracks: 19, totalAlbums: 5, totalArtists: 1, totalPlaylists: 7,
         |  link: 'spotify:search:godspeed+you+black+emperor'
-        |  didYouMean: 'godsmack',
+        |  didYouMean: 'Godspeed You! Black Emperor',
         |  tracks: [], artists: [], albums: [], playlists: []
         |}
       h4 int (track/album/artist/playlist)Offset
@@ -332,9 +331,8 @@ block content
       h4 <a href="#playlist">playlist[]</a> playlists
       p Returns the playlists found in the search.
 
-  script(type='text/javascript')
-    !function ($) {
-        $(function(){
-            window.prettyPrint && prettyPrint()
-        })
-    }(window.jQuery)
+  h5 Old versions
+  p
+    a(href='api/0.4.1/api.html') 0.4.1
+  script.
+    !function($) {$(function() {window.prettyPrint && prettyPrint()})}(window.jQuery)

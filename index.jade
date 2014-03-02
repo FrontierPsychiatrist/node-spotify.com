@@ -25,6 +25,8 @@ block content
       li A computer running Linux or OSX with internet access (again sorry, no Windows support at this time)
       li node.js and libspotify installed
   h2 Download
+  p I provide precompiled binaries if you don't want to / cannot compile if installing via npm. Just unzip the file and copy
+    |the contents to the node_modules directory.
   p Current version: v0.4.1.
   ul
     li
@@ -32,16 +34,12 @@ block content
     li
       a(href='/builds/0.4.1/node-spotify-0.4.1-OSX.zip') Mac OSX
     li
-      a(href='/builds/0.4.1/node-spotify-0.4.1-linux.zip') Linux x86
+      a(href='/builds/0.4.1/node-spotify-0.4.1-linux.zip') Linux x86_64
 
   h2 Source Code
   p The source code is available at
     |<a href="https://github.com/FrontierPsychiatrist/node-spotify" target="_blank">github</a>
   p Have a look at the <a href="programmers.html">programmers section</a> too!
 
-  script(type='text/javascript')
-    !function ($) {
-      $(function(){
-        window.prettyPrint && prettyPrint()
-        })
-    }(window.jQuery)
+  script.
+    !function($) {$(function() {window.prettyPrint && prettyPrint()})}(window.jQuery)
