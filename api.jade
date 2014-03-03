@@ -51,7 +51,7 @@ block content
         h2 A word about the warnings
       p
         |You will find some warnings on the object types playlist and playlist container. I am aware that it is frustrating for a user of a node.js library to keep track
-        |of instances of objects. I hope to improve this in further versions.
+        |of instances of objects. I hope to improve this in future versions.
       p
         |To help you understand where this comes from: Currently all Javascript objects that you access are created "on the fly" in C++, i.e. nothing is cached.
         |Objects like a playlist or a playlist container register themselves to Spotify events. If you call some methods twice, a new object will be created and register
@@ -150,6 +150,7 @@ block content
         |  /* Playlists */
         |  playlist_renamed: 'playlist_renamed',
         |  playlist_added: 'playlist_added',
+        |  playlist_removed: 'playlist_removed',
         |  playlist_tracks_added: 'playlist_tracks_added',
         |  /* player */
         |  player_end_of_track: 'player_end_of_track'
@@ -184,6 +185,9 @@ block content
         |playlistContainer.on('playlist_added', function(err, newPlaylist, position) {
         |  playlists.splice(position, 0, newPlaylist);
         |}
+        |playlistContainer.on('playlist_removed', function(err, position) {
+        |  playlists.splice(position, 1);
+        |}
 
       div.page-header
         h2
@@ -210,7 +214,7 @@ block content
         |var tracks = otherPlaylist.getTracks();
         |playlist.addTracks(tracks, 2);
       h4 void removeTracks(int[] indices)
-      p Remove the tracks at the given inices.
+      p Remove the tracks at the given indices.
       pre.prettyprint
         |var indices = [0, 4, 5]
         |playlist.removeTracks(indices);
