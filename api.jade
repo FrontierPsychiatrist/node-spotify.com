@@ -16,6 +16,8 @@ block content
         li
           a(href='#events') Events
         li
+          a(href='#playlistContainer') Playlist container
+        li
           a(href='#playlist') Playlists
         li
           a(href='#player') Player
@@ -46,6 +48,22 @@ block content
       span.alert.alert-info Unless specifically mentioned, properties of objects are not writeable (you can't change a track name in Spotify).
 
       div.page-header
+        h2 A word about the warnings
+      p
+        |You will find some warnings on the object types playlist and playlist container. I am aware that it is frustrating for a user of a node.js library to keep track
+        |of instances of objects. I hope to improve this in further versions.
+      p
+        |To help you understand where this comes from: Currently all Javascript objects that you access are created "on the fly" in C++, i.e. nothing is cached.
+        |Objects like a playlist or a playlist container register themselves to Spotify events. If you call some methods twice, a new object will be created and register
+        |itself again to the events, so now two objects are listening. Javascript has garbage collection and if your old reference gets collected it will unregister itself
+        |but you and I cannot control when that happens.
+      p
+        |Furthermore I map spotify types to their "living" Javascript objects. So not only get callbacks registered twice, the callback will be executed on two objects. That means
+        |if you call a dangerous method n times the callback will be called n*n times.
+
+      p So for now it is best if you cache the results of methods marked as dangerous in your code.
+
+      div.page-header
         h2
           a#spotify The spotify object
       h4 string rememberedUser
@@ -62,8 +80,10 @@ block content
       h4 void ready( function callback )
       pre.prettyprint
        |var playlists;
+       |var playlistContainer;
        |spotify.ready( function() {
-       |  playlists = spotify.playlistContainer.getPlaylists();
+       |  playlistContainer = spotify.playlistContainer;
+       |  playlists = playlistContainer.getPlaylists();
        |});
       p Set a callback that is executed after the login to spotify has succeeded and the root playlistcontainer is loaded.
       h4
@@ -115,18 +135,21 @@ block content
         |var artist = spotify.createFromLink('spotify:artist:4svpOyfmQKuWpHLjgy4cdK');
       p If the link is not valid, <code>Undefined</code> is returned.
       h4 <a href="#playlistContainer">playlistContainer</a> playlistContainer
+      p
+        span.alert.alert-danger Don't access the root playlist container property twice.
       p The root playlist container, i.e. the one of the user logged in. Contains methods to access and manage playlists.
 
       div.page-header
         h2
           a#events Events
-      p The following objects all have the methods "on" and "off" to un/register functions to events: <code>playlist, player</code>
+      p The following objects all have the methods "on" and "off" to un/register functions to events: <code>playlist, playlistContainer, player</code>
         |The events will be called from within the native module.
       p The following events are available:
       pre.prettyprint
         |var events = {
         |  /* Playlists */
         |  playlist_renamed: 'playlist_renamed',
+        |  playlist_added: 'playlist_added',
         |  playlist_tracks_added: 'playlist_tracks_added',
         |  /* player */
         |  player_end_of_track: 'player_end_of_track'
@@ -141,6 +164,9 @@ block content
       div.page-header
         h2
           a#playlistContainer Playlist container
+      p
+        span.alert.alert-danger Don't access the root playlist container property twice.
+      p Like with playlists this can lead to unwanted double execution of callbacks. It's best to save the root playlistcontainer in a variable in the ready callback.
       h4 <a href="#playlist">playlist[]</a> getPlaylists()
       p All playlists in this playlist container.
       p
@@ -152,6 +178,12 @@ block content
         span.alert.alert-danger Do not call this method more than once.
       h4 void addPlaylist(string name)
       p Create a new playlist. You should access the new playlist via the playlist_added callback.
+      h5 Events
+      p You can register to the following events on a playlist container via the <code>on</code> method (unregister via <code>off</code>).
+      pre.prettyprint
+        |playlistContainer.on('playlist_added', function(err, newPlaylist, position) {
+        |  playlists.splice(position, 0, newPlaylist);
+        |}
 
       div.page-header
         h2
@@ -172,7 +204,18 @@ block content
         |var tracks = playlist.getTracks();
       p Returns all <a href="#track">tracks</a> for the playlist. This is available as a method instead of a property
         |so it can be controlled when a playlist fetches it tracks from spotify.
-      p The following events are available for playlists:
+      h4 void addTracks(<a href="#track">track[]</a> tracks, int position)
+      p Add the array of tracks after the given position.
+      pre.prettyprint
+        |var tracks = otherPlaylist.getTracks();
+        |playlist.addTracks(tracks, 2);
+      h4 void removeTracks(int[] indices)
+      p Remove the tracks at the given inices.
+      pre.prettyprint
+        |var indices = [0, 4, 5]
+        |playlist.removeTracks(indices);
+      h5 Events
+      p You can register to the following events on a playlist via the <code>on</code> method (unregister via <code>off</code>).
         ul
           li <code>playlist_renamed</code>
           pre.prettyprint
@@ -182,10 +225,10 @@ block content
           p Fired when the playlist is renamed.
           li <code>playlist_tracks_added</code>
           pre.prettyprint
-            |playlist.on('playlist_tracks_added', function(err, tracks) {
+            |playlist.on('playlist_tracks_added', function(err, playlist, tracks, position) {
             |  console.log(tracks);
             |});
-          p This callback will get the tracks that are added to the playlist as the object.
+          p This callback will get the tracks that are added to the playlist and the position after which they were added.
 
       div.page-header
         h2
