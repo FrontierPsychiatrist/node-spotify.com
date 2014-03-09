@@ -58,12 +58,18 @@ playlistContainer.on('playlist_moved', function(err, position, newPosition, /* m
   link: 'spotify:user:1234567890:playlist:6nruasfjdkMMLOas'
 }</pre><h4>string name</h4><p>The name of the playlist.</p><h4>string link</h4><p>The spotify link to the playlist</p><h4><a id="getTracks">track[] getTracks()</a></h4><pre class="prettyprint">var tracks = playlist.getTracks();</pre><p>Returns all <a href="#track">tracks</a> for the playlist. This is available as a method instead of a property
 so it can be controlled when a playlist fetches it tracks from spotify.</p><h4>void addTracks(<a href="#track">track[]</a> tracks, int position)</h4><p>Add the array of tracks after the given position.</p><pre class="prettyprint">var tracks = otherPlaylist.getTracks();
-playlist.addTracks(tracks, 2);</pre><h4>void removeTracks(int[] indices)</h4><p>Remove the tracks at the given indices.</p><pre class="prettyprint">var indices = [0, 4, 5]
-playlist.removeTracks(indices);</pre><h5>Events</h5><p>You can register to the following events on a playlist via the <code>on</code> method (unregister via <code>off</code>).<ul><li><code>playlist_renamed</code></li><pre class="prettyprint">spotify.playlists.on('playlist_renamed', function(err, playlist) {
+playlist.addTracks(tracks, 2);</pre><h4>void removeTracks(int[] indices)</h4><p>Remove the tracks at the given indices.</p><pre class="prettyprint">var indices = [0, 4, 5];
+playlist.removeTracks(indices);</pre><h4>void reorderTracks(int[] indices, int newPosition)</h4><p>Reorder tracks. The tracks with the indices will get moved to newPosition.</p><pre class="prettyprint">var indices = [0,1];
+playlist.reorderTracks(indices, 3);</pre><h5>Events</h5><p>You can register to the following events on a playlist via the <code>on</code> method (unregister via <code>off</code>).<ul><li><code>playlist_renamed</code><pre class="prettyprint">spotify.playlists.on('playlist_renamed', function(err, playlist) {
  console.log(playlist.name);
-});</pre><p>Fired when the playlist is renamed.</p><li><code>playlist_tracks_added</code></li><pre class="prettyprint">playlist.on('playlist_tracks_added', function(err, playlist, tracks, position) {
+});</pre><p>Fired when the playlist is renamed.</p></li><li><code>playlist_tracks_added</code><pre class="prettyprint">playlist.on('playlist_tracks_added', function(err, playlist, tracks, position) {
  console.log(tracks);
-});</pre><p>This callback will get the tracks that are added to the playlist and the position after which they were added.</p></ul></p><h3>Playlist folder</h3><p>There are special kinds of playlists for folders. A folder consists of a start and an end element. You can recognize them from the <code>type</code> property, the possible
+});</pre><p>This callback will get the tracks that are added to the playlist and the position after which they were added.</p></li><li><code>playlist_tracks_moved</code><pre class="prettyprint">playlist.on('playlist_tracks_moved', function(err, playlist, trackIndices, newPosition) {
+ console.log(trackIndices);
+ console.log(newPosition);
+});</pre><p>This callback will gets the indices of the tracks that have been moved and the position they have been moved to.</p></li><li><code>playlist_tracks_removed</code><pre class="prettyprint">playlist.on('playlist_tracks_removed', function(err, playlist, trackIndices) {
+ console.log(trackIndices);
+});</pre><p>This callback will gets the indices of the tracks that have been removed.</p></li></ul></p><h3>Playlist folder</h3><p>There are special kinds of playlists for folders. A folder consists of a start and an end element. You can recognize them from the <code>type</code> property, the possible
 values are available in <code>spotify.constants</code>.</p><p>About folders:<ul><li>Folders cannot be renamed</li><li>To delete a folder delete <b>both</b> the start and end element! Be careful, when you deleted the start element the index of the end element will have changed!</li><li>To put a playlist on a folder move it between the start and end element.</li></ul></p><div class="page-header"><h2><a id="player">Player</a></h2></div><p>The player object does not wrap a type of libspotify. It is the central object to play tracks. It is accessible
 via <code>spotify.player</code>.</p><pre class="prettyprint">{
   currentSecond: 3

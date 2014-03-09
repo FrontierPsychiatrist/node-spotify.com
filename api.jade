@@ -218,23 +218,42 @@ block content
       h4 void removeTracks(int[] indices)
       p Remove the tracks at the given indices.
       pre.prettyprint
-        |var indices = [0, 4, 5]
+        |var indices = [0, 4, 5];
         |playlist.removeTracks(indices);
+      h4 void reorderTracks(int[] indices, int newPosition)
+      p Reorder tracks. The tracks with the indices will get moved to newPosition.
+      pre.prettyprint
+        |var indices = [0,1];
+        |playlist.reorderTracks(indices, 3);
       h5 Events
       p You can register to the following events on a playlist via the <code>on</code> method (unregister via <code>off</code>).
         ul
           li <code>playlist_renamed</code>
-          pre.prettyprint
-            |spotify.playlists.on('playlist_renamed', function(err, playlist) {
-            |  console.log(playlist.name);
-            |});
-          p Fired when the playlist is renamed.
+            pre.prettyprint
+              |spotify.playlists.on('playlist_renamed', function(err, playlist) {
+              |  console.log(playlist.name);
+              |});
+            p Fired when the playlist is renamed.
           li <code>playlist_tracks_added</code>
-          pre.prettyprint
-            |playlist.on('playlist_tracks_added', function(err, playlist, tracks, position) {
-            |  console.log(tracks);
-            |});
-          p This callback will get the tracks that are added to the playlist and the position after which they were added.
+            pre.prettyprint
+              |playlist.on('playlist_tracks_added', function(err, playlist, tracks, position) {
+              |  console.log(tracks);
+              |});
+            p This callback will get the tracks that are added to the playlist and the position after which they were added.
+          li <code>playlist_tracks_moved</code>
+            pre.prettyprint
+              |playlist.on('playlist_tracks_moved', function(err, playlist, trackIndices, newPosition) {
+              |  console.log(trackIndices);
+              |  console.log(newPosition);
+              |});
+            p This callback will gets the indices of the tracks that have been moved and the position they have been moved to.
+          li <code>playlist_tracks_removed</code>
+            pre.prettyprint
+              |playlist.on('playlist_tracks_removed', function(err, playlist, trackIndices) {
+              |  console.log(trackIndices);
+              |});
+            p This callback will gets the indices of the tracks that have been removed.
+
       h3 Playlist folder
       p
         |There are special kinds of playlists for folders. A folder consists of a start and an end element. You can recognize them from the <code>type</code> property, the possible
