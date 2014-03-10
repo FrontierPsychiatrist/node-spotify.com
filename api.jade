@@ -176,6 +176,18 @@ block content
       p
         |Adds a new playlist folder at the given position (0-based). This will actually create two special playlists, the folder start and folder end. To put a playlist in
         |the folder, move it beyond the start but before the end. If you want to delete the folder you <b>must</b> delete both elements, otherwise you will have an orphaned element.
+      h4 void deletePlaylist(int index)
+      p Deletes the playlist at the given index (0-based).
+      h4 void movePlaylist(int index, int newPosition)
+      p
+        |Move the playlist at the index to the given new position. The position is the desired index <i>before</i> anything is moved.
+        |Example: Imagine you have three playlists
+        ul
+          li Playlist 1 (index: 0)
+          li Playlist 2 (index: 1)
+          li Playlist 3 (index: 2)
+        |If you want to move Playlist 1 behind Playlist 2 the desired index is 2, so you call movePlaylist(0,2). If you want to move Playlist 2 before Playlist 1 the desired
+        |index is 0, so you call movePlaylist(1, 0).
       h5 Events
       p You can register to the following events on a playlist container via the <code>on</code> method (unregister via <code>off</code>).
       pre.prettyprint
@@ -221,7 +233,7 @@ block content
         |var indices = [0, 4, 5];
         |playlist.removeTracks(indices);
       h4 void reorderTracks(int[] indices, int newPosition)
-      p Reorder tracks. The tracks with the indices will get moved to newPosition.
+      p Reorder tracks. The tracks with the indices will get moved to newPosition. newPosition indicates the new index <i>before</i> anything is actually moved.
       pre.prettyprint
         |var indices = [0,1];
         |playlist.reorderTracks(indices, 3);
