@@ -103,8 +103,8 @@ block content
       p See the description of <a href="#player">player</a>.
       h4 void logout()
       pre.prettyprint
-        |spotify.logout();
-      p Logs the user out.
+        |spotify.logout(function callback);
+      p Logs the user out. The callback will be called as soon as the log out is done.
       h4
         a#searchCtor search Search( string searchText, optional int offset, optional int limit )
       p This is a constructor for the <a href="#search">search</a> object. All of the four entities <a href="#track">track</a>
