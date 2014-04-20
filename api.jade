@@ -137,7 +137,9 @@ block content
       h4 void logout()
       pre.prettyprint
         |spotify.logout(function callback);
-      p Logs the user out. The callback will be called as soon as the log out is done.
+      p Logs the user out. The callback will be called as soon as the log out is done. You can also set the callback with the property <code>spotify.onLogout</code>.
+      h4 function onLogout
+      p You can also set the logout callback with this property. It will be used if you don't provide a callback to the <code>logout</code> method.
       h4
         a#searchCtor search Search( string searchText, optional int offset, optional int limit )
       p This is a constructor for the <a href="#search">search</a> object. All of the four entities <a href="#track">track</a>
