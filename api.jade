@@ -245,10 +245,13 @@ block content
       pre.prettyprint
         |{
         |   name: 'Rock music',
-        |   link: 'spotify:user:1234567890:playlist:6nruasfjdkMMLOas'
+        |   link: 'spotify:user:1234567890:playlist:6nruasfjdkMMLOas',
+        |   collaborative: false
         |}
       h4 string name
-      p The name of the playlist.
+      p The name of the playlist. This property is settable.
+      h4 bool collaborative
+      p Flag if the playlist is collaborative. This property is settable.
       h4 string link
       p The spotify link to the playlist
       h4
@@ -488,5 +491,6 @@ block content
     a.btn(href='api/0.5.0/api.html') 0.5.0
     a.btn(href='api/0.5.1/api.html') 0.5.1
     a.btn(href='api/0.5.2/api.html') 0.5.2
+    a.btn(href='api/0.5.4/api.html') 0.5.4
   script.
     !function($) {$(function() {window.prettyPrint && prettyPrint()})}(window.jQuery)
