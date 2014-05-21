@@ -2,7 +2,7 @@ div.page-header
     h2
         a#internal Internals
     p
-        .alert.alert-danger Internals may crash your app.
+        .alert.alert-danger Internals may crash your app if used incorrectly.
     p The internal object contains some internal methods and objects.
     h3 Prototypes
     p Contains the constructor functions for all Spotify wrapped types. Do <b>not</b> create new instances with these. They
@@ -14,3 +14,7 @@ div.page-header
         | }
         | //This will make the method foo appear on all Track (and TrackExtended) instances.
         | spotify.internal.protos.Track.prototype.foo = function(bar) {...};
+        | var track = spotify.createFromLink('spotify:track:123');
+        | track.foo('abc');
+    p Unfortunately the methods/properties you add to the prototypes are not seeable when you print an object
+        | in the NodeJS interpreter, do not get fooled by that.
