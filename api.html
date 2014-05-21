@@ -1,143 +1,152 @@
-<!DOCTYPE html><html><head><link rel="stylesheet" href="css/bootstrap.min.css" media="screen" type="text/css"><link rel="stylesheet" href="css/main.css" media="screen" type="text/css"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta http-equiv="Content-Type" content="text/html" charset="utf-8"><title>node-spotify: api</title><script type="text/javascript" src="js/jquery.min.js"></script><script type="text/javascript" src="js/bootstrap.min.js"></script><script type="text/javascript" src="js/prettify.js"></script><link rel="stylesheet" href="css/prettify.css" type="text/css"></head><body data-spy="scroll" data-target=".sidebar"><div class="navbar"><div class="navbar-inner"><a href="index.html" class="brand">Home</a><ul class="nav"><li class="active"><a href="api.html">node.js API</a></li><li><a href="programmers.html">Into the C++ code</a></li><li><a href="impressum.html">Impressum</a></li></ul><!--a(href='demo/index.html').btn.btn-success.pull-right Try it!--></div></div><div class="container"><div class="row"><div class="span2 sidebar"><ul class="nav nav-list affix"><li><a href="#spotify">Spotify object</a></li><li><a href="#events">Events</a></li><li><a href="#playlistContainer">Playlist container</a></li><li><a href="#playlist">Playlists</a></li><li><a href="#player">Player</a></li><li><a href="#track">Tracks</a></li><li><a href="#album">Albums</a></li><li><a href="#artist">Artists</a></li><li><a href="#search">Search</a></li></ul></div><div class="span10"><div class="page-header"><h1>node.js API</h1></div><p>As every other nodeJS module you just require node-spotify to use it. It returns a function that you can pass
-some options. The tracefile won't be created if you just leave it out.</p><p>The appkeyFile option is required. You need an appkey from spotify to use node-spotify, you can get it from
+<!DOCTYPE html><html><head><link rel="stylesheet" href="css/bootstrap.min.css" media="screen" type="text/css"><link rel="stylesheet" href="css/main.css" media="screen" type="text/css"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta http-equiv="Content-Type" content="text/html" charset="utf-8"><title>node-spotify: api</title><script type="text/javascript" src="js/jquery.min.js"></script><script type="text/javascript" src="js/bootstrap.min.js"></script><script type="text/javascript" src="js/prettify.js"></script><link rel="stylesheet" href="css/prettify.css" type="text/css"></head><body data-spy="scroll" data-target=".sidebar"><div class="navbar navbar-default"><div class="navbar-header"><a href="index.html" class="navbar-brand">Home</a></div><div class="collapse navbar-collapse"><ul class="nav navbar-nav"><li class="active"><a href="api.html">node.js API</a></li><li><a href="programmers.html">Into the C++ code</a></li><li><a href="impressum.html">Impressum</a></li></ul><!--a(href='demo/index.html').btn.btn-success.pull-right Try it!--></div></div><div class="container"><div class="row"><div class="col-lg-2"><div class="sidebar"><ul class="nav nav-pills nav-stacked affix"><li><a href="#events">Events</a></li><li><a href="#spotify">Spotify object</a></li><li><a href="#playlistContainer">Playlist container</a></li><li><a href="#playlist">Playlists</a></li><li><a href="#player">Player</a></li><li><a href="#track">Tracks</a></li><li><a href="#album">Albums</a></li><li><a href="#artist">Artists</a></li><li><a href="#search">Search</a></li><li><a href="#internal">Internals</a></li></ul></div></div><div class="col-lg-10"><div class="page-header"><h1>node.js API</h1></div><p>As every other nodeJS module you just require node-spotify to use it. It returns a function that you can pass
+some options. The tracefile won't be created if you just leave it out.</p><p>The appkeyFile option is required. You need an appkey from Spotify to use node-spotify, you can get it from
 <a href="https://developer.spotify.com/technologies/libspotify/#application-keys">here</a>.</p><pre class="prettyprint">var options = {
- settingsFolder: 'settings',
- cacheFolder: 'cache',
- traceFile: 'trace.txt' //default is empty,
- appkeyFile: 'spotify_appkey.key' //required
+    settingsFolder: 'settings',
+    cacheFolder: 'cache',
+    traceFile: 'trace.txt' //default is empty,
+    appkeyFile: 'spotify_appkey.key' //required
 }
-var spotify = require('spotify')(options);</pre><p>This will create a spotify session but perform no further action with it.</p><span class="alert alert-info">Unless specifically mentioned, properties of objects are not writeable (you can't change a track name in Spotify).</span><div class="page-header"><h2>A word about the warnings</h2></div><p>Some methods are "unsafe" to call more than once. I.e. if you access the <code>spotify.playlistContainer</code> property twice you may lose callbacks on the playlist container.
-Same goes with <code>playlistContainer.getPlaylists()</code>, if you attach additional data to playlists it may be lost in callbacks if you access getPlaylists more than once.</p><p>It's safer to cache the results of <code>spotify.playlistContainer</code> and <code>playlistContainer.getPlaylists()</code> in variables.</p><div class="page-header"><h2>Loading and availability of objects</h2></div><p>libspotify unfortunately does return types that are not fully loaded yet. The metadata_updated callback will be called when <i>some</i> object has been loaded. So node-spotify
+var spotify = require('spotify')(options);</pre><p>This will create a Spotify session but perform no further action with it.</p><div class="alert alert-info">Unless specifically mentioned, properties of objects are not writeable (you can't change a track name in Spotify).</div><div class="page-header"><h2>Caching of the JavaScript wrapper objects</h2></div><p>All JavaScript objects wrapping a Spotify type are created on the fly when you access them. This means everytime you call <code>spotify.playlistContainer</code>
+you get a new instance wrapping the same <code>sp_playlistcontainer</code>. Of course this implies everything you did with your previous playlist container is
+now gone. Especially the attached event handlers - as soon as the V8 garbage collection kicks in, they are lost.</p><div class="page-header"><h2>Loading and availability of objects</h2></div><p>libspotify unfortunately does return types that are not fully loaded yet. The metadata_updated callback will be called when <i>some</i> object has been loaded. So node-spotify
 will in some cases return objects like playlists and tracks that are not yet loaded. You can use the <a href="#waitForLoaded">waitForLoaded</a> helper method to attach a callback
-to when an object becomes loaded.</p><div class="page-header"><h2><a id="spotify">The spotify object</a></h2></div><h4>string rememberedUser</h4><pre class="prettyprint">console.log(spotify.rememberedUser);
+to when an object becomes loaded.</p><div class="page-header"><h2><a id="events">Events</a></h2><p>On <code>playlist</code> objects and <code>playlistContainer</code> objects you can attach events with the <code>on</code> method. <code>on</code> simply
+takes an object that has all the events set you want to attach.</p><p>Careful: <code>on</code> does first remove <i>all</i> old callbacks you had attached and then attach only the ones you provided. So you can not progressively
+attach one callback after another, you always have to provide all callbacks you want to attach-</p><p>Be sure to call <code>off</code> when an object goes out of <i>your</i> scope (e.g. if you don't use a playlist anymore). This will immediately remove all
+callbacks. Otherwise you have to rely on the garbage collector to remove them.</p><p>The following events are available:</p><pre class="prettyprint">playlist.on({
+    playlistRenamed: ...,
+    tracksAdded: ...,
+    tracksMoved: ...,
+    tracksRemoved: ...,
+    trackCreatedChanged: ...,
+    trackSeenChanged: ...,
+    trackMessageChanged: ...
+}</pre><pre class="prettyprint">playlistContainer.on({
+    playlistAdded: ...,
+    playlistMoved: ...,
+    playlistRemoved: ...
+}</pre><p>Descriptions for the events can be found in the corresponding objects.</p><p>Some other events are available on <code>player</code> and <code>spotify</code>.</p></div><div class="page-header"><h2><a id="spotify">The spotify object</a></h2><h4>string rememberedUser</h4><pre class="prettyprint">console.log(spotify.rememberedUser);
 //your@email.com</pre><p>The name of the remebered user if present, <code>undefined</code> otherwise.</p><h4>void login( string username, string password, bool remember, bool useRemembered )</h4><pre class="prettyprint">spotify.login('myusername', 'mypassword', true, false);</pre><p>Starts a spotify session and logs in. Facebook login is possible. The user must have a spotify premium account.
 If <code>remember</code> is set to true, the user will be remembered and can relogin the next time. If
 <code>useRemembered</code> is set to true, the remembered user will be used.</p><h4>void ready( function callback )</h4><pre class="prettyprint">var playlists;
 var playlistContainer;
 spotify.ready( function() {
- playlistContainer = spotify.playlistContainer;
- playlists = playlistContainer.getPlaylists();
+    playlistContainer = spotify.playlistContainer;
+    playlists = playlistContainer.getPlaylists();
 });</pre><p>Set a callback that is executed after the login to spotify has succeeded and the root playlistcontainer is loaded.</p><h4><a id="waitForLoaded">waitForLoaded(object[] objects, function callback)</a></h4><p>With this helper function you can queue the processing of objects that maybe aren't loaded yet to the point where they will be loaded. Internally it uses the
 libspotify metadata_updated callback to achieve this. The objects in the array may be loaded at different points in time. The callback takes <b>one</b> of the objects
-as a parameter.</p><span class="alert alert-warning">Don't attach too many objects</span><p></p><p>This method will happily iterate over all objects on each metadata_updated call which might be very frequent.</p><pre class="prettyprint">function printTrack(track) {
- //At this point the track will be loaded
- console.log(track);
+as a parameter.</p><div class="alert alert-warning">Don't attach too many objects</div><p></p><p>This method will happily iterate over all objects on each metadata_updated call which might be very frequent.</p><pre class="prettyprint">function printTrack(track) {
+    //At this point the track will be loaded
+    console.log(track);
 }
 function waitForTrack(playlist) {
- //At this point the playlist will be loaded
- var track = playlist.getTracks()[0];
- track.position = 0;
- console.log('Track is loaded: ' + track.isLoaded);
- spotify.waitForLoaded([track], printTrack);
+    //At this point the playlist will be loaded
+    var track = playlist.getTracks()[0];
+    track.position = 0;
+    console.log('Track is loaded: ' + track.isLoaded);
+    spotify.waitForLoaded([track], printTrack);
 }
 var playlist = spotify.playlistContainer.getPlaylists()[14];
 spotify.waitForLoaded([playlist], waitForTrack);</pre><p>This example will print the first track of the 14th playlist only when it is available. As Javascript is very dynamic don't forget you can attach own properties to the objects
-(like the position in this example).</p><h4><a id="getPlaylists">playlist[] getPlaylists()</a></h4><p><span class="alert alert-warning">This method is marked as deprecated and will be removed. Use the <a href="#playlistContainer">playlist container</a>.</span></p><pre class="prettyprint">var playlists = spotify.getPlaylists();</pre><p>Returns all <a href="#playlist">playlists</a> for the current user. If the user is not logged in, an empty list is returned.</p><h4><a href='#playlist'>playlist</a> getStarred()</h4><p><span class="alert alert-warning">This method is marked as deprecated and will be removed. Use the <a href="#playlistContainer">playlist container</a>.</span></p><p>Returns the starred playlist</p><pre class="prettyprint">var starredPlaylist = spotify.getStarred();</pre><h4>void playlists.on( string eventname, function callback )</h4><p>This is kind of a static callback setter for playlist callbacks.</p><pre class="prettyprint">spotify.playlists.on(events.playlist_name_change, function(err, playlist) {
- console.log('New playlist name: ' + playlist.name);
-});</pre><p>Register a callback for <b>all</b> playlists for a certain <a href="#events">event</a>. If the given event happens on any playlist
-the callback will be called.</p><span class="alert alert-info">The callback will only be called if a javascript object of the playlist has been created.</span><h4><a href="#player">player</a> player</h4><p>See the description of <a href="#player">player</a>.</p><h4>void logout()</h4><pre class="prettyprint">spotify.logout(function callback);</pre><p>Logs the user out. The callback will be called as soon as the log out is done. You can also set the callback with the property <code>spotify.onLogout</code>.</p><h4>function onLogout</h4><p>You can also set the logout callback with this property. It will be used if you don't provide a callback to the <code>logout</code> method.</p><h4><a id="searchCtor">search Search( string searchText, optional int offset, optional int limit )</a></h4><p>This is a constructor for the <a href="#search">search</a> object. All of the four entities <a href="#track">track</a>
+(like the position in this example).</p><h4><a href="#player">player</a> player</h4><p>See the description of <a href="#player">player</a>.</p><h4>void logout()</h4><pre class="prettyprint">spotify.logout(function callback);</pre><p>Logs the user out. The callback will be called as soon as the log out is done. You can also set the callback with the property <code>spotify.onLogout</code>.</p><h4>function onLogout</h4><p>You can also set the logout callback with this property. It will be used if you don't provide a callback to the <code>logout</code> method.</p><h4><a id="searchCtor">search Search( string searchText, optional int offset, optional int limit )</a></h4><p>This is a constructor for the <a href="#search">search</a> object. All of the four entities <a href="#track">track</a>
 , <a href="#album">album</a>, <a href="#artist">artist</a> and <a href="#playlist">playlist</a> are searched. For each
 there is a limit of the number of items to be returned by the search and a offset to start from. The constructor takes
 global values for these but they can be set individually on the returned object.</p><pre class="prettyprint">var search = new spotify.Search('godspeed you black emperor', 2, 10);</pre><h4>spotifyObject createFromLink( string link )</h4><p>Creates a spotify object for the given spotify link. Currently, tracks, artists and albums are supported.</p><pre class="prettyprint">var track = spotify.createFromLink('spotify:track:05JqOBN6XW4eFUVQlgR0I3');
 var album = spotify.createFromLink('spotify:album:2rT82YYlV9UoxBYLIezkRq');
-var artist = spotify.createFromLink('spotify:artist:4svpOyfmQKuWpHLjgy4cdK');</pre><p>If the link is not valid, <code>Undefined</code> is returned.</p><h4><a href="#playlistContainer">playlistContainer</a> playlistContainer</h4><p><span class="alert alert-danger">Don't access the root playlist container property twice.</span></p><p>The root playlist container, i.e. the one of the user logged in. Contains methods to access and manage playlists.</p><h4>object constants</h4><p>A property containing libspotify constants that are used in some objects.</p><pre class="prettyprint">{
- ARTISTBROWSE_FULL: 0,
- ARTISTBROWSE_NO_TRACKS: 1,
- ARTISTBROWSE_NO_ALBUMS: 2,
- PLAYLIST_TYPE_PLAYLIST: 0,
- PLAYLIST_TYPE_START_FOLDER: 1,
- PLAYLIST_TYPE_END_FOLDER: 2
-}</pre><div class="page-header"><h2><a id="events">Events</a></h2></div><p>The following objects all have the methods "on" and "off" to un/register functions to events: <code>playlist, playlistContainer, player</code>
-The events will be called from within the native module.</p><p>The following events are available:</p><pre class="prettyprint">var events = {
- /* Playlists */
- playlist_renamed: 'playlist_renamed',
- playlist_added: 'playlist_added',
- playlist_removed: 'playlist_removed',
- playlist_moved: 'playlist_moved',
- playlist_tracks_added: 'playlist_tracks_added',
- /* player */
- player_end_of_track: 'player_end_of_track'
-}</pre><p>In general you register to an event like this:</p><pre class="prettyprint">object.on(event.name, function(err, object) {
- console.log(object);
-}</pre><p>Descriptions for the events can be found in the corresponding objects.</p><div class="page-header"><h2><a id="playlistContainer">Playlist container</a></h2></div><p><span class="alert alert-danger">Don't access the root playlist container property twice.</span></p><p>Like with playlists this can lead to unwanted double execution of callbacks. It's best to save the root playlistcontainer in a variable in the ready callback.</p><h4><a href="#playlist">playlist[]</a> getPlaylists()</h4><p>All playlists in this playlist container.</p><h4><a href="#playlist">playlist</a> getStarred()</h4><p>The starred playlist of this playlist container.</p><h4>void addPlaylist(string name)</h4><p>Create a new playlist. You should access the new playlist via the playlist_added callback.</p><h4>void addFolder(int position, string name)</h4><p>Adds a new playlist folder at the given position (0-based). This will actually create two special playlists, the folder start and folder end. To put a playlist in
+var artist = spotify.createFromLink('spotify:artist:4svpOyfmQKuWpHLjgy4cdK');</pre><p>If the link is not valid, <code>Undefined</code> is returned.</p><h4><a href="#playlistContainer">playlistContainer</a> playlistContainer</h4><p><div class="alert alert-danger">Don't access the root playlist container property twice.</div></p><p>The root playlist container, i.e. the one of the user logged in. Contains methods to access and manage playlists.</p><h4>object constants</h4><p>A property containing libspotify constants that are used in some objects.</p><pre class="prettyprint">{
+    ARTISTBROWSE_FULL: 0,
+    ARTISTBROWSE_NO_TRACKS: 1,
+    ARTISTBROWSE_NO_ALBUMS: 2,
+    PLAYLIST_TYPE_PLAYLIST: 0,
+    PLAYLIST_TYPE_START_FOLDER: 1,
+    PLAYLIST_TYPE_END_FOLDER: 2
+}</pre></div><div class="page-header"><h2><a id="playlistContainer">Playlist container</a></h2><p><div class="alert alert-danger">Don't access the root playlist container property twice.</div></p><p>Like with playlists this can lead to unwanted double execution of callbacks. It's best to save the root playlistcontainer in a variable in the ready callback.</p><h4><a href="#playlist">playlist[]</a> getPlaylists()</h4><p>All playlists in this playlist container.</p><h4><a href="#playlist">playlist</a> getStarred()</h4><p>The starred playlist of this playlist container.</p><h4>void addPlaylist(string name)</h4><p>Create a new playlist. You should access the new playlist via the playlist_added callback.</p><h4>void addFolder(int position, string name)</h4><p>Adds a new playlist folder at the given position (0-based). This will actually create two special playlists, the folder start and folder end. To put a playlist in
 the folder, move it beyond the start but before the end. If you want to delete the folder you <b>must</b> delete both elements, otherwise you will have an orphaned element.</p><h4>void deletePlaylist(int index)</h4><p>Deletes the playlist at the given index (0-based).</p><h4>void movePlaylist(int index, int newPosition)</h4><p>Move the playlist at the index to the given new position. The position is the desired index <i>before</i> anything is moved.
 Example: Imagine you have three playlists<ul><li>Playlist 1 (index: 0)</li><li>Playlist 2 (index: 1)</li><li>Playlist 3 (index: 2)</li></ul>If you want to move Playlist 1 behind Playlist 2 the desired index is 2, so you call movePlaylist(0,2). If you want to move Playlist 2 before Playlist 1 the desired
 index is 0, so you call movePlaylist(1, 0).</p><h5>Events</h5><p>You can register to the following events on a playlist container via the <code>on</code> method (unregister via <code>off</code>).</p><pre class="prettyprint">playlistContainer.on('playlist_added', function(err, newPlaylist, position) {
- playlists.splice(position, 0, newPlaylist);
+    playlists.splice(position, 0, newPlaylist);
 }
 playlistContainer.on('playlist_removed', function(err, position, /* maybe undefined */ playlist) {
- playlists.splice(position, 1);
+    playlists.splice(position, 1);
 }
 playlistContainer.on('playlist_moved', function(err, position, newPosition, /* maybe undefined */ _playlist) {
- var playlist = playlists[position];
- playlists.splice(position, 1);
- playlists.splice(newPosition, 0, playlist);
-}</pre><div class="page-header"><h2><a id="playlist">Playlists</a></h2></div><p>The playlist objects are availabe via <a href="#getPlaylists">getPlaylists()</a>.</p><pre class="prettyprint">{
-  name: 'Rock music',
-  link: 'spotify:user:1234567890:playlist:6nruasfjdkMMLOas',
-  collaborative: false
-}</pre><h4>string name</h4><p>The name of the playlist. This property is settable.</p><h4>bool collaborative</h4><p>Flag if the playlist is collaborative. This property is settable.</p><h4>string link</h4><p>The spotify link to the playlist</p><h4><a id="getTracks">track[] getTracks()</a></h4><pre class="prettyprint">var tracks = playlist.getTracks();</pre><p>Returns all <a href="#track">tracks</a> for the playlist. This is available as a method instead of a property
+    var playlist = playlists[position];
+    playlists.splice(position, 1);
+    playlists.splice(newPosition, 0, playlist);
+}</pre></div><div class="page-header"><h2><a id="playlist">Playlists</a></h2><p>The playlist objects are availabe via <a href="#getPlaylists">getPlaylists()</a>.</p><pre class="prettyprint">{
+    name: 'Rock music',
+    link: 'spotify:user:1234567890:playlist:6nruasfjdkMMLOas'
+}</pre><h4>string name</h4><p>The name of the playlist.</p><h4>string link</h4><p>The spotify link to the playlist</p><h4><a id="getTracks">track[] getTracks()</a></h4><pre class="prettyprint">var tracks = playlist.getTracks();</pre><p>Returns all <a href="#track">tracks</a> for the playlist. This is available as a method instead of a property
 so it can be controlled when a playlist fetches it tracks from spotify.</p><h4>void addTracks(<a href="#track">track[]</a> tracks, int position)</h4><p>Add the array of tracks after the given position.</p><pre class="prettyprint">var tracks = otherPlaylist.getTracks();
 playlist.addTracks(tracks, 2);</pre><h4>void removeTracks(int[] indices)</h4><p>Remove the tracks at the given indices.</p><pre class="prettyprint">var indices = [0, 4, 5];
 playlist.removeTracks(indices);</pre><h4>void reorderTracks(int[] indices, int newPosition)</h4><p>Reorder tracks. The tracks with the indices will get moved to newPosition. newPosition indicates the new index <i>before</i> anything is actually moved.</p><pre class="prettyprint">var indices = [0,1];
 playlist.reorderTracks(indices, 3);</pre><h5>Events</h5><p>You can register to the following events on a playlist via the <code>on</code> method (unregister via <code>off</code>).<ul><li><code>playlist_renamed</code><pre class="prettyprint">spotify.playlists.on('playlist_renamed', function(err, playlist) {
- console.log(playlist.name);
+   console.log(playlist.name);
 });</pre><p>Fired when the playlist is renamed.</p></li><li><code>playlist_tracks_added</code><pre class="prettyprint">playlist.on('playlist_tracks_added', function(err, playlist, tracks, position) {
- console.log(tracks);
+   console.log(tracks);
 });</pre><p>This callback will get the tracks that are added to the playlist and the position after which they were added.</p></li><li><code>playlist_tracks_moved</code><pre class="prettyprint">playlist.on('playlist_tracks_moved', function(err, playlist, trackIndices, newPosition) {
- console.log(trackIndices);
- console.log(newPosition);
+   console.log(trackIndices);
+   console.log(newPosition);
 });</pre><p>This callback will gets the indices of the tracks that have been moved and the position they have been moved to.</p></li><li><code>playlist_tracks_removed</code><pre class="prettyprint">playlist.on('playlist_tracks_removed', function(err, playlist, trackIndices) {
- console.log(trackIndices);
+    console.log(trackIndices);
 });</pre><p>This callback will gets the indices of the tracks that have been removed.</p></li></ul></p><h3>Playlist folder</h3><p>There are special kinds of playlists for folders. A folder consists of a start and an end element. You can recognize them from the <code>type</code> property, the possible
-values are available in <code>spotify.constants</code>.</p><p>About folders:<ul><li>Folders cannot be renamed</li><li>To delete a folder delete <b>both</b> the start and end element! Be careful, when you deleted the start element the index of the end element will have changed!</li><li>To put a playlist on a folder move it between the start and end element.</li></ul></p><div class="page-header"><h2><a id="player">Player</a></h2></div><p>The player object does not wrap a type of libspotify. It is the central object to play tracks. It is accessible
+values are available in <code>spotify.constants</code>.</p><p>About folders:<ul><li>Folders cannot be renamed</li><li>To delete a folder delete <b>both</b> the start and end element! Be careful, when you deleted the start element the index of the end element will have changed!</li><li>To put a playlist on a folder move it between the start and end element.</li></ul></p></div><div class="page-header"><h2><a id="player">Player</a></h2><p>The player object does not wrap a type of libspotify. It is the central object to play tracks. It is accessible
 via <code>spotify.player</code>.</p><pre class="prettyprint">{
-  currentSecond: 3
+    currentSecond: 3
 }</pre><h4>void play(<a href='#track'>track</a> track)</h4><pre class="prettyprint">var track = playlist.getTracks()[0];
 spotify.player.play(track);</pre><p>Plays the given track to the end.</p><h4>void stop()</h4><pre class="prettyprint">spotify.player.stop();</pre><p>Stop playing</p><h4>void pause()</h4><pre class="prettyprint">spotify.player.pause();</pre><p>Pause playing</p><h4>void resume()</h4><pre class="prettyprint">spotify.player.resume();</pre><p>Resume playing</p><h4>void seek(int second)</h4><p>Seek to the given second on the currently playing track.</p><pre class="prettyprint">spotify.player.seek(98);</pre><h4>int currentSecond</h4><p>The the current second of the song playing.</p><h4>events</h4><p>The following events will be called in the player object:<ul><li><code>player_end_of_track</code></li><pre class="prettyprint">spotify.player.on(events.player_end_of_track, function(err, player) {
-  currentTrack++;
-  playNextTrack();
-});</pre></ul></p><div class="page-header"><h2><a id="track">Tracks</a></h2></div><p>Tracks can be acquired by calling the <a href="#getTracks">getTracks()</a> method on a <a href="#playlist">playlist</a></p><pre class="prettyprint">{ popularity: 40,
- starred: true,
- album:
-  { link: 'spotify:album:2rT82YYlV9UoxBYLIezkRq',
+    currentTrack++;
+    playNextTrack();
+});</pre></ul></p></div><div class="page-header"><h2><a id="track">Tracks</a></h2><p>Tracks can be acquired by calling the <a href="#getTracks">getTracks()</a> method on a <a href="#playlist">playlist</a></p><pre class="prettyprint">{ popularity: 40,
+    starred: true,
+    album:
+     { link: 'spotify:album:2rT82YYlV9UoxBYLIezkRq',
     name: 'Lift Your Skinny Fists Like Antennas to Heaven' },
- artists:
-  [ { link: 'spotify:artist:4svpOyfmQKuWpHLjgy4cdK',
-      name: 'Godspeed You! Black Emperor' } ],
- duration: 1399,
- link: 'spotify:track:05JqOBN6XW4eFUVQlgR0I3',
- name: 'Murray Ostril:"They Don\'t Sleep Anymore On the Beach"'
-}</pre><h4>string name</h4><p>The name of the track</p><h4>album album</h4><p>The <a href="#album">album</a> of the track</p><h4>artist[] artists</h4><p>All <a href="#artist">artists</a> for this track</p><h4>boolean starred</h4><p>True if the track is starred. This property is settable.</p><h4>int popularity</h4><p>The popularity of the song in Spotify.</p><h4>int duration</h4><p>The duration of the song in seconds.</p><h4>string link</h4><p>The spotify link to the track</p><div class="page-header"><h2><a id="album">Albums</a></h2></div><pre class="prettyprint">{ link: 'spotify:album:2rT82YYlV9UoxBYLIezkRq',
- name: 'Lift Your Skinny Fists Like Antennas to Heaven' }</pre><h4>string name</h4><p>The name of the album</p><h4>string link</h4><p>The spotify link to the album</p><h4>string getCoverBase64()</h4><p>Returns a string representing the cover of the album which is a JPEG encoded in Base64. If no cover is loadable
+    artists:
+      [ { link: 'spotify:artist:4svpOyfmQKuWpHLjgy4cdK',
+   name: 'Godspeed You! Black Emperor' } ],
+   duration: 1399,
+   link: 'spotify:track:05JqOBN6XW4eFUVQlgR0I3',
+   name: 'Murray Ostril:"They Don\'t Sleep Anymore On the Beach"'
+}</pre><h4>string name</h4><p>The name of the track</p><h4>album album</h4><p>The <a href="#album">album</a> of the track</p><h4>artist[] artists</h4><p>All <a href="#artist">artists</a> for this track</p><h4>boolean starred</h4><p>True if the track is starred. This property is settable.</p><h4>int popularity</h4><p>The popularity of the song in Spotify.</p><h4>int duration</h4><p>The duration of the song in seconds.</p><h4>string link</h4><p>The spotify link to the track</p></div><div class="page-header"><h2><a id="album">Albums</a></h2><pre class="prettyprint">{ link: 'spotify:album:2rT82YYlV9UoxBYLIezkRq',
+name: 'Lift Your Skinny Fists Like Antennas to Heaven' }</pre><h4>string name</h4><p>The name of the album</p><h4>string link</h4><p>The spotify link to the album</p><h4>string getCoverBase64()</h4><p>Returns a string representing the cover of the album which is a JPEG encoded in Base64. If no cover is loadable
 it returns <code>undefined</code></p><pre class="prettyprint">var embeddedImage = 'data:image/jpeg;base64,' + album.getCoverBase64();</pre><h4>void browse( function callback )</h4><p>Retrieve additional information for the album such as tracks and copyrights.</p><pre class="prettyprint">var album = spotify.createFromLink('spotify:album:2rT82YYlV9UoxBYLIezkRq');
 album.browse( function(err, browsedAlbum) {
- var tracks = browsedAlbum.tracks;
- var review = browsedAlbum.review;
- var copyrights = browsedAlbum.copyrights;
- var artist = browsedAlbum.artist;
-});</pre><p>The album will have these new properties even outside of the callback.</p><div class="page-header"><h2><a id="artist">Artists</a></h2></div><pre class="prettyprint">{ link: 'spotify:artist:4svpOyfmQKuWpHLjgy4cdK',
- name: 'Godspeed You! Black Emperor' }</pre><h4>string name</h4><p>The name of the artist.</p><h4>string link</h4><p>The spotify link to the artist</p><h4>void browse( artistbrowse_type type, function callback )</h4><p>Retrieve additional information for the artist such as tracks, albums and similar artists. Available options for
+    var tracks = browsedAlbum.tracks;
+    var review = browsedAlbum.review;
+    var copyrights = browsedAlbum.copyrights;
+    var artist = browsedAlbum.artist;
+});</pre><p>The album will have these new properties even outside of the callback.</p></div><div class="page-header"><h2><a id="artist">Artists</a></h2><pre class="prettyprint">{ link: 'spotify:artist:4svpOyfmQKuWpHLjgy4cdK',
+name: 'Godspeed You! Black Emperor' }</pre><h4>string name</h4><p>The name of the artist.</p><h4>string link</h4><p>The spotify link to the artist</p><h4>void browse( artistbrowse_type type, function callback )</h4><p>Retrieve additional information for the artist such as tracks, albums and similar artists. Available options for
 artistbrowse_type are spotify.constants.ARTISTBROWSE_FULL, spotify.constants.ARTISTBROWSE_NO_TRACKS and spotify.constants.ARTISTBROWSE_NO_ALBUMS (includes no tracks).</p><pre class="prettyprint">var artist = spotify.createFromLink('spotify:artist:4svpOyfmQKuWpHLjgy4cdK');
 artist.browse( spotify.constants.ARTISTBROWSE_FULL, function(err, browsedArtist) {
- var tracks = browsedAartist.tracks;
- var tophitTracks = browsedArtist.tophitTracks;
- var albums = browsedArtist.albums;
- var similarArtists = browsedAartist.similarArtists;
- var biography = browsedArtist.biography;
-});</pre><p>The album will have these new properties even outside of the callback.</p><div class="page-header"><h2><a id="search">Search</a></h2></div><p>A search object can be created using the <a href="#searchCtor">search constructor</a> in the spotify object. Initially it will have
+    var tracks = browsedAartist.tracks;
+    var tophitTracks = browsedArtist.tophitTracks;
+    var albums = browsedArtist.albums;
+    var similarArtists = browsedAartist.similarArtists;
+    var biography = browsedArtist.biography;
+});</pre><p>The album will have these new properties even outside of the callback.</p></div><div class="page-header"><h2><a id="search">Search</a></h2><p>A search object can be created using the <a href="#searchCtor">search constructor</a> in the spotify object. Initially it will have
 only a few properties, but after it has been executed with <code>execute()</code> more will be added</p><pre class="prettyprint">{
- trackOffset: 0, trackLimit: 10,
- albumOffset: 0, albumLimit: 10,
- artistOffset: 0, artistLimit: 10,
- playlistOffset: 0, playlistOffset, 10,
- //available after execute:
- totalTracks: 19, totalAlbums: 5, totalArtists: 1, totalPlaylists: 7,
- link: 'spotify:search:godspeed+you+black+emperor'
- didYouMean: 'Godspeed You! Black Emperor',
- tracks: [], artists: [], albums: [], playlists: []
+    trackOffset: 0, trackLimit: 10,
+    albumOffset: 0, albumLimit: 10,
+    artistOffset: 0, artistLimit: 10,
+    playlistOffset: 0, playlistOffset, 10,
+    //available after execute:
+    totalTracks: 19, totalAlbums: 5, totalArtists: 1, totalPlaylists: 7,
+    link: 'spotify:search:godspeed+you+black+emperor'
+    didYouMean: 'Godspeed You! Black Emperor',
+    tracks: [], artists: [], albums: [], playlists: []
 }</pre><h4>int (track/album/artist/playlist)Offset</h4><p>The offset to use for the search of the corresponding item. E.g. if you want the last 5 tracks when 10 tracks
 are found in total you set trackOffset to 5 and trackLimit to 5. This property is settable.</p><h4>int (track/album/artist/playlist)Limit</h4><p>Limits the number of corresponding items in the search. This property is settable.</p><h4>void execute( function callback )</h4><p>Executes the search. When the search is ready, the callback will be called.</p><pre class="prettyprint">var search = new spotify.Search('test');
-search.execute( function(err, searchResult) {
- console.log(searchResult);
-});</pre><p>You can modify the offsets and limits and execute the search again.</p><span class="alert alert-info">The following properties are available after the call to execute.</span><h4>int total(Tracks/Albums/Artists/Playlists)</h4><p>The total number of items found.</p><h4>string link</h4><p>The spotify link to the search</p><h4>string didYouMean</h4><p>The spotify did-you-mean text</p><h4><a href="#track">track[]</a> tracks</h4><p>Returns the tracks found in the search.</p><h4><a href="#album">album[]</a> albums</h4><p>Returns the albums found in the search.</p><h4><a href="#artist">artist[]</a> artists</h4><p>Returns the artists found in the search</p><h4><a href="#playlist">playlist[]</a> playlists</h4><p>Returns the playlists found in the search.</p></div></div><h5>Old versions</h5><p><a href="api/0.4.1/api.html" class="btn">0.4.1</a><a href="api/0.5.0/api.html" class="btn">0.5.0</a><a href="api/0.5.1/api.html" class="btn">0.5.1</a><a href="api/0.5.2/api.html" class="btn">0.5.2</a><a href="api/0.5.4/api.html" class="btn">0.5.4</a></p><script>!function($) {$(function() {window.prettyPrint && prettyPrint()})}(window.jQuery)</script></div><footer class="footer"><div class="container"><p>node-spotify by FrontierPsychiatrist</p></div></footer></body></html>
+    search.execute( function(err, searchResult) {
+    console.log(searchResult);
+});</pre><p>You can modify the offsets and limits and execute the search again.</p><div class="alert alert-info">The following properties are available after the call to execute.</div><h4>int total(Tracks/Albums/Artists/Playlists)</h4><p>The total number of items found.</p><h4>string link</h4><p>The spotify link to the search</p><h4>string didYouMean</h4><p>The spotify did-you-mean text</p><h4><a href="#track">track[]</a> tracks</h4><p>Returns the tracks found in the search.</p><h4><a href="#album">album[]</a> albums</h4><p>Returns the albums found in the search.</p><h4><a href="#artist">artist[]</a> artists</h4><p>Returns the artists found in the search</p><h4><a href="#playlist">playlist[]</a> playlists</h4><p>Returns the playlists found in the search.</p></div><div class="page-header"><h2><a id="internal">Internals</a></h2><p><div class="alert alert-danger">Internals may crash your app if used incorrectly.</div></p><p>The internal object contains some internal methods and objects.</p><h3>Prototypes</h3><p>Contains the constructor functions for all Spotify wrapped types. Do <b>not</b> create new instances with these. They
+are meant to provide a way to add methods to the prototype.</p><pre class="prettyprint">spotify.internal.protos = {
+    Track: function()...,
+    TrackExtended: function()..., //This is the Track object you get in playlists, extends Track
+}
+//This will make the method foo appear on all Track (and TrackExtended) instances.
+spotify.internal.protos.Track.prototype.foo = function(bar) {...};
+var track = spotify.createFromLink('spotify:track:123');
+track.foo('abc');</pre><p>Unfortunately the methods/properties you add to the prototypes are not seeable when you print an object
+in the NodeJS interpreter, do not get fooled by that.</p></div></div></div><h5>Old versions</h5><p><a href="api/0.4.1/api.html" class="btn">0.4.1</a><a href="api/0.5.0/api.html" class="btn">0.5.0</a><a href="api/0.5.1/api.html" class="btn">0.5.1</a><a href="api/0.5.2/api.html" class="btn">0.5.2</a></p><script>!function($) {$(function() {window.prettyPrint && prettyPrint()})}(window.jQuery)</script></div><footer class="footer"><div class="container"><p>node-spotify by FrontierPsychiatrist</p></div></footer></body></html>

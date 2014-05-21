@@ -1,0 +1,23 @@
+div.page-header
+    h2
+        a#artist Artists
+    pre.prettyprint
+        | { link: 'spotify:artist:4svpOyfmQKuWpHLjgy4cdK',
+        | name: 'Godspeed You! Black Emperor' }
+    h4 string name
+    p The name of the artist.
+    h4 string link
+    p The spotify link to the artist
+    h4 void browse( artistbrowse_type type, function callback )
+    p Retrieve additional information for the artist such as tracks, albums and similar artists. Available options for
+        | artistbrowse_type are spotify.constants.ARTISTBROWSE_FULL, spotify.constants.ARTISTBROWSE_NO_TRACKS and spotify.constants.ARTISTBROWSE_NO_ALBUMS (includes no tracks).
+    pre.prettyprint
+        | var artist = spotify.createFromLink('spotify:artist:4svpOyfmQKuWpHLjgy4cdK');
+        | artist.browse( spotify.constants.ARTISTBROWSE_FULL, function(err, browsedArtist) {
+        |     var tracks = browsedAartist.tracks;
+        |     var tophitTracks = browsedArtist.tophitTracks;
+        |     var albums = browsedArtist.albums;
+        |     var similarArtists = browsedAartist.similarArtists;
+        |     var biography = browsedArtist.biography;
+        | });
+    p The album will have these new properties even outside of the callback.

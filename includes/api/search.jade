@@ -1,0 +1,45 @@
+div.page-header
+    h2
+        a#search Search
+    p A search object can be created using the <a href="#searchCtor">search constructor</a> in the spotify object. Initially it will have
+        | only a few properties, but after it has been executed with <code>execute()</code> more will be added
+    pre.prettyprint
+        | {
+        |     trackOffset: 0, trackLimit: 10,
+        |     albumOffset: 0, albumLimit: 10,
+        |     artistOffset: 0, artistLimit: 10,
+        |     playlistOffset: 0, playlistOffset, 10,
+        |     //available after execute:
+        |     totalTracks: 19, totalAlbums: 5, totalArtists: 1, totalPlaylists: 7,
+        |     link: 'spotify:search:godspeed+you+black+emperor'
+        |     didYouMean: 'Godspeed You! Black Emperor',
+        |     tracks: [], artists: [], albums: [], playlists: []
+        | }
+    h4 int (track/album/artist/playlist)Offset
+    p The offset to use for the search of the corresponding item. E.g. if you want the last 5 tracks when 10 tracks
+        | are found in total you set trackOffset to 5 and trackLimit to 5. This property is settable.
+    h4 int (track/album/artist/playlist)Limit
+    p Limits the number of corresponding items in the search. This property is settable.
+    h4 void execute( function callback )
+    p Executes the search. When the search is ready, the callback will be called.
+    pre.prettyprint
+        | var search = new spotify.Search('test');
+        |     search.execute( function(err, searchResult) {
+        |     console.log(searchResult);
+        | });
+    p You can modify the offsets and limits and execute the search again.
+    .alert.alert-info The following properties are available after the call to execute.
+    h4 int total(Tracks/Albums/Artists/Playlists)
+    p The total number of items found.
+    h4 string link
+    p The spotify link to the search
+    h4 string didYouMean
+    p The spotify did-you-mean text
+    h4 <a href="#track">track[]</a> tracks
+    p Returns the tracks found in the search.
+    h4 <a href="#album">album[]</a> albums
+    p Returns the albums found in the search.
+    h4 <a href="#artist">artist[]</a> artists
+    p Returns the artists found in the search
+    h4 <a href="#playlist">playlist[]</a> playlists
+    p Returns the playlists found in the search.

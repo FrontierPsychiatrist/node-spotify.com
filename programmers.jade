@@ -84,9 +84,5 @@ block content
       |object is returned in a <code>HandleScope</code> the object is attached to the V8 runtime and can be garbage collected. Garbage
       |collection will also delete the Node object.
 
-    script(type='text/javascript')
-        !function ($) {
-            $(function(){
-                window.prettyPrint && prettyPrint()
-            })
-        }(window.jQuery)
+    script.
+        !function ($) {$(function(){window.prettyPrint && prettyPrint()})}(window.jQuery)

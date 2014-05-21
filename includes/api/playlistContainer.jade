@@ -1,0 +1,42 @@
+div.page-header
+    h2
+        a#playlistContainer Playlist container
+    p
+        .alert.alert-danger Don't access the root playlist container property twice.
+    p Like with playlists this can lead to unwanted double execution of callbacks. It's best to save the root playlistcontainer in a variable in the ready callback.
+    h4 <a href="#playlist">playlist[]</a> getPlaylists()
+    p All playlists in this playlist container.
+    h4 <a href="#playlist">playlist</a> getStarred()
+    p The starred playlist of this playlist container.
+    h4 void addPlaylist(string name)
+    p Create a new playlist. You should access the new playlist via the playlist_added callback.
+    h4 void addFolder(int position, string name)
+    p
+        | Adds a new playlist folder at the given position (0-based). This will actually create two special playlists, the folder start and folder end. To put a playlist in
+        | the folder, move it beyond the start but before the end. If you want to delete the folder you <b>must</b> delete both elements, otherwise you will have an orphaned element.
+    h4 void deletePlaylist(int index)
+    p Deletes the playlist at the given index (0-based).
+    h4 void movePlaylist(int index, int newPosition)
+    p
+        | Move the playlist at the index to the given new position. The position is the desired index <i>before</i> anything is moved.
+        | Example: Imagine you have three playlists
+        ul
+            li Playlist 1 (index: 0)
+            li Playlist 2 (index: 1)
+            li Playlist 3 (index: 2)
+        | If you want to move Playlist 1 behind Playlist 2 the desired index is 2, so you call movePlaylist(0,2). If you want to move Playlist 2 before Playlist 1 the desired
+        | index is 0, so you call movePlaylist(1, 0).
+    h5 Events
+    p You can register to the following events on a playlist container via the <code>on</code> method (unregister via <code>off</code>).
+    pre.prettyprint
+        | playlistContainer.on('playlist_added', function(err, newPlaylist, position) {
+        |     playlists.splice(position, 0, newPlaylist);
+        | }
+        | playlistContainer.on('playlist_removed', function(err, position, /* maybe undefined */ playlist) {
+        |     playlists.splice(position, 1);
+        | }
+        | playlistContainer.on('playlist_moved', function(err, position, newPosition, /* maybe undefined */ _playlist) {
+        |     var playlist = playlists[position];
+        |     playlists.splice(position, 1);
+        |     playlists.splice(newPosition, 0, playlist);
+        | }

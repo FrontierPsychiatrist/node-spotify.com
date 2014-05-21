@@ -1,0 +1,87 @@
+div.page-header
+    h2
+        a#spotify The spotify object
+    h4 string rememberedUser
+    pre.prettyprint
+        | console.log(spotify.rememberedUser);
+        | //your@email.com
+    p The name of the remebered user if present, <code>undefined</code> otherwise.
+    h4 void login( string username, string password, bool remember, bool useRemembered )
+    pre.prettyprint
+        | spotify.login('myusername', 'mypassword', true, false);
+    p Starts a spotify session and logs in. Facebook login is possible. The user must have a spotify premium account.
+        | If <code>remember</code> is set to true, the user will be remembered and can relogin the next time. If
+        | <code>useRemembered</code> is set to true, the remembered user will be used.
+    h4 void ready( function callback )
+    pre.prettyprint
+        | var playlists;
+        | var playlistContainer;
+        | spotify.ready( function() {
+        |     playlistContainer = spotify.playlistContainer;
+        |     playlists = playlistContainer.getPlaylists();
+        | });
+    p Set a callback that is executed after the login to spotify has succeeded and the root playlistcontainer is loaded.
+    h4
+        a#waitForLoaded waitForLoaded(object[] objects, function callback)
+    p
+        | With this helper function you can queue the processing of objects that maybe aren't loaded yet to the point where they will be loaded. Internally it uses the
+        | libspotify metadata_updated callback to achieve this. The objects in the array may be loaded at different points in time. The callback takes <b>one</b> of the objects
+        | as a parameter.
+    .alert.alert-warning Don't attach too many objects
+    p
+    p This method will happily iterate over all objects on each metadata_updated call which might be very frequent.
+    pre.prettyprint
+        | function printTrack(track) {
+        |     //At this point the track will be loaded
+        |     console.log(track);
+        | }
+        | function waitForTrack(playlist) {
+        |     //At this point the playlist will be loaded
+        |     var track = playlist.getTracks()[0];
+        |     track.position = 0;
+        |     console.log('Track is loaded: ' + track.isLoaded);
+        |     spotify.waitForLoaded([track], printTrack);
+        | }
+        | var playlist = spotify.playlistContainer.getPlaylists()[14];
+        | spotify.waitForLoaded([playlist], waitForTrack);
+    p
+        | This example will print the first track of the 14th playlist only when it is available. As Javascript is very dynamic don't forget you can attach own properties to the objects
+        | (like the position in this example).
+    h4 <a href="#player">player</a> player
+    p See the description of <a href="#player">player</a>.
+    h4 void logout()
+    pre.prettyprint
+        | spotify.logout(function callback);
+    p Logs the user out. The callback will be called as soon as the log out is done. You can also set the callback with the property <code>spotify.onLogout</code>.
+    h4 function onLogout
+    p You can also set the logout callback with this property. It will be used if you don't provide a callback to the <code>logout</code> method.
+    h4
+        a#searchCtor search Search( string searchText, optional int offset, optional int limit )
+    p This is a constructor for the <a href="#search">search</a> object. All of the four entities <a href="#track">track</a>
+        | , <a href="#album">album</a>, <a href="#artist">artist</a> and <a href="#playlist">playlist</a> are searched. For each
+        | there is a limit of the number of items to be returned by the search and a offset to start from. The constructor takes
+        | global values for these but they can be set individually on the returned object.
+    pre.prettyprint
+        | var search = new spotify.Search('godspeed you black emperor', 2, 10);
+    h4 spotifyObject createFromLink( string link )
+    p Creates a spotify object for the given spotify link. Currently, tracks, artists and albums are supported.
+    pre.prettyprint
+        | var track = spotify.createFromLink('spotify:track:05JqOBN6XW4eFUVQlgR0I3');
+        | var album = spotify.createFromLink('spotify:album:2rT82YYlV9UoxBYLIezkRq');
+        | var artist = spotify.createFromLink('spotify:artist:4svpOyfmQKuWpHLjgy4cdK');
+    p If the link is not valid, <code>Undefined</code> is returned.
+    h4 <a href="#playlistContainer">playlistContainer</a> playlistContainer
+    p
+        .alert.alert-danger Don't access the root playlist container property twice.
+    p The root playlist container, i.e. the one of the user logged in. Contains methods to access and manage playlists.
+    h4 object constants
+    p A property containing libspotify constants that are used in some objects.
+    pre.prettyprint
+        | {
+        |     ARTISTBROWSE_FULL: 0,
+        |     ARTISTBROWSE_NO_TRACKS: 1,
+        |     ARTISTBROWSE_NO_ALBUMS: 2,
+        |     PLAYLIST_TYPE_PLAYLIST: 0,
+        |     PLAYLIST_TYPE_START_FOLDER: 1,
+        |     PLAYLIST_TYPE_END_FOLDER: 2
+        | }

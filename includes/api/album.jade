@@ -1,0 +1,26 @@
+div.page-header
+    h2
+        a#album Albums
+    pre.prettyprint
+        | { link: 'spotify:album:2rT82YYlV9UoxBYLIezkRq',
+        | name: 'Lift Your Skinny Fists Like Antennas to Heaven' }
+    h4 string name
+    p The name of the album
+    h4 string link
+    p The spotify link to the album
+    h4 string getCoverBase64()
+    p Returns a string representing the cover of the album which is a JPEG encoded in Base64. If no cover is loadable
+        | it returns <code>undefined</code>
+    pre.prettyprint
+        | var embeddedImage = 'data:image/jpeg;base64,' + album.getCoverBase64();
+    h4 void browse( function callback )
+    p Retrieve additional information for the album such as tracks and copyrights.
+    pre.prettyprint
+        | var album = spotify.createFromLink('spotify:album:2rT82YYlV9UoxBYLIezkRq');
+        | album.browse( function(err, browsedAlbum) {
+        |     var tracks = browsedAlbum.tracks;
+        |     var review = browsedAlbum.review;
+        |     var copyrights = browsedAlbum.copyrights;
+        |     var artist = browsedAlbum.artist;
+        | });
+    p The album will have these new properties even outside of the callback.
