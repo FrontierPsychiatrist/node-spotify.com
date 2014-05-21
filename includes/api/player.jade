@@ -1,0 +1,41 @@
+div.page-header
+    h2
+        a#player Player
+    p The player object does not wrap a type of libspotify. It is the central object to play tracks. It is accessible
+        | via <code>spotify.player</code>.
+    pre.prettyprint
+        | {
+        |     currentSecond: 3
+        | }
+    h4 void play(<a href='#track'>track</a> track)
+    pre.prettyprint
+        | var track = playlist.getTracks()[0];
+        | spotify.player.play(track);
+    p Plays the given track to the end.
+    h4 void stop()
+    pre.prettyprint
+        | spotify.player.stop();
+    p Stop playing
+    h4 void pause()
+    pre.prettyprint
+        | spotify.player.pause();
+    p Pause playing
+    h4 void resume()
+    pre.prettyprint
+        | spotify.player.resume();
+    p Resume playing
+    h4 void seek(int second)
+    p Seek to the given second on the currently playing track.
+    pre.prettyprint
+        | spotify.player.seek(98);
+    h4 int currentSecond
+    p The the current second of the song playing.
+    h4 events
+    p The following events will be called in the player object:
+        ul
+            li <code>player_end_of_track</code>
+            pre.prettyprint
+                | spotify.player.on(events.player_end_of_track, function(err, player) {
+                |     currentTrack++;
+                |     playNextTrack();
+                | });

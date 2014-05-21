@@ -1,0 +1,31 @@
+div.page-header
+    h2
+        a#track Tracks
+    p Tracks can be acquired by calling the <a href="#getTracks">getTracks()</a> method on a <a href="#playlist">playlist</a>
+    pre.prettyprint
+        | { popularity: 40,
+        |     starred: true,
+        |     album:
+        |      { link: 'spotify:album:2rT82YYlV9UoxBYLIezkRq',
+        |     name: 'Lift Your Skinny Fists Like Antennas to Heaven' },
+        |     artists:
+        |       [ { link: 'spotify:artist:4svpOyfmQKuWpHLjgy4cdK',
+        |    name: 'Godspeed You! Black Emperor' } ],
+        |    duration: 1399,
+        |    link: 'spotify:track:05JqOBN6XW4eFUVQlgR0I3',
+        |    name: 'Murray Ostril:"They Don\'t Sleep Anymore On the Beach"'
+        | }
+    h4 string name
+    p The name of the track
+    h4 album album
+    p The <a href="#album">album</a> of the track
+    h4 artist[] artists
+    p All <a href="#artist">artists</a> for this track
+    h4 boolean starred
+    p True if the track is starred. This property is settable.
+    h4 int popularity
+    p The popularity of the song in Spotify.
+    h4 int duration
+    p The duration of the song in seconds.
+    h4 string link
+    p The spotify link to the track
