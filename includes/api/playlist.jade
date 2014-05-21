@@ -5,10 +5,13 @@ div.page-header
     pre.prettyprint
         | {
         |     name: 'Rock music',
-        |     link: 'spotify:user:1234567890:playlist:6nruasfjdkMMLOas'
+        |     link: 'spotify:user:1234567890:playlist:6nruasfjdkMMLOas',
+        |     collaborative: false
         | }
     h4 string name
-    p The name of the playlist.
+    p The name of the playlist. This property is settable.
+    h4 bool collaborative
+    p Flag if the playlist is collaborative. This property is settable.
     h4 string link
     p The spotify link to the playlist
     h4
