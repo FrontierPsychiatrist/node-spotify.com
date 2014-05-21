@@ -1,4 +1,17 @@
 div.page-header
     h2
         a#internal Internals
-    p The internal object...
+    p
+        span.alert.alert-danger Internals may crash your app.
+    p The internal object contains some internal methods and objects.
+    h3 Prototypes
+    p Contains the constructor functions for all Spotify wrapped types. Do <b>not</b> create new instances with these. They
+        | are meant to provide a way to add methods to the prototype.
+    pre.prettyprint
+        | spotify.internal.protos = {
+        |     Track: function()...,
+        |     TrackExtended: function()..., //This is the Track object you get in playlists, extends Track
+        | }
+        |
+        | //This will make the method foo appear on all Track (and TrackExtended) instances.
+        | spotify.internal.protos.Track.prototype.foo = function(bar) {...};
