@@ -11,11 +11,12 @@ html
         title node-spotify: #{active}
         block scripts
         block stylesheets
-    body(data-spy='scroll', data-target='.sidebar')
-        .navbar
-            .navbar-inner
-                a.brand(href="index.html") Home
-                ul.nav
+    body(data-spy='scroll' data-target='.sidebar')
+        .navbar.navbar-default
+            .navbar-header
+                a.navbar-brand(href="index.html") Home
+            .collapse.navbar-collapse
+                ul.nav.navbar-nav
                     each name, page in pages
                         if page == active
                             li.active

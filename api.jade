@@ -1,85 +1,86 @@
 extends base/layout
 block vars
-  - var active='api'
+    - var active='api'
 block scripts
-  script(type='text/javascript', src='js/jquery.min.js')
-  script(type='text/javascript', src='js/bootstrap.min.js')
-  script(type='text/javascript', src='js/prettify.js')
+    script(type='text/javascript', src='js/jquery.min.js')
+    script(type='text/javascript', src='js/bootstrap.min.js')
+    script(type='text/javascript', src='js/prettify.js')
 block stylesheets
-  link(rel='stylesheet', href='css/prettify.css', type='text/css')
+    link(rel='stylesheet', href='css/prettify.css', type='text/css')
 block content
-  .row
-    .span2.sidebar
-      ul.nav.nav-list.affix
-        li
-          a(href='#events') Events
-        li
-          a(href='#spotify') Spotify object
-        li
-          a(href='#playlistContainer') Playlist container
-        li
-          a(href='#playlist') Playlists
-        li
-          a(href='#player') Player
-        li
-          a(href='#track') Tracks
-        li
-          a(href='#album') Albums
-        li
-          a(href='#artist') Artists
-        li
-          a(href='#search') Search
-        li
-          a(href='#internal') Internals
-    .span10
-      div.page-header
-        h1 node.js API
-      p As every other nodeJS module you just require node-spotify to use it. It returns a function that you can pass
-        |some options. The tracefile won't be created if you just leave it out.
-      p The appkeyFile option is required. You need an appkey from Spotify to use node-spotify, you can get it from
-        |<a href="https://developer.spotify.com/technologies/libspotify/#application-keys">here</a>.
-      pre.prettyprint
-        |var options = {
-        |  settingsFolder: 'settings',
-        |  cacheFolder: 'cache',
-        |  traceFile: 'trace.txt' //default is empty,
-        |  appkeyFile: 'spotify_appkey.key' //required
-        |}
-        |var spotify = require('spotify')(options);
-      p This will create a Spotify session but perform no further action with it.
-      span.alert.alert-info Unless specifically mentioned, properties of objects are not writeable (you can't change a track name in Spotify).
+    .row
+        .col-lg-2
+            .sidebar
+                ul.nav.nav-pills.nav-stacked.affix
+                    li
+                        a(href='#events') Events
+                    li
+                        a(href='#spotify') Spotify object
+                    li
+                        a(href='#playlistContainer') Playlist container
+                    li
+                        a(href='#playlist') Playlists
+                    li
+                        a(href='#player') Player
+                    li
+                        a(href='#track') Tracks
+                    li
+                        a(href='#album') Albums
+                    li
+                        a(href='#artist') Artists
+                    li
+                        a(href='#search') Search
+                    li
+                        a(href='#internal') Internals
+        .col-lg-10
+            div.page-header
+                h1 node.js API
+            p As every other nodeJS module you just require node-spotify to use it. It returns a function that you can pass
+                | some options. The tracefile won't be created if you just leave it out.
+            p The appkeyFile option is required. You need an appkey from Spotify to use node-spotify, you can get it from
+                | <a href="https://developer.spotify.com/technologies/libspotify/#application-keys">here</a>.
+            pre.prettyprint
+                | var options = {
+                |     settingsFolder: 'settings',
+                |     cacheFolder: 'cache',
+                |     traceFile: 'trace.txt' //default is empty,
+                |     appkeyFile: 'spotify_appkey.key' //required
+                | }
+                | var spotify = require('spotify')(options);
+            p This will create a Spotify session but perform no further action with it.
+            .alert.alert-info Unless specifically mentioned, properties of objects are not writeable (you can't change a track name in Spotify).
 
-      div.page-header
-        h2 Caching of the JavaScript wrapper objects
-      p
-        |All JavaScript objects wrapping a Spotify type are created on the fly when you access them. This means everytime you call <code>spotify.playlistContainer</code>
-        |you get a new instance wrapping the same <code>sp_playlistcontainer</code>. Of course this implies everything you did with your previous playlist container is
-        |now gone. Especially the attached event handlers - as soon as the V8 garbage collection kicks in, they are lost.
+            div.page-header
+                h2 Caching of the JavaScript wrapper objects
+            p
+                | All JavaScript objects wrapping a Spotify type are created on the fly when you access them. This means everytime you call <code>spotify.playlistContainer</code>
+                | you get a new instance wrapping the same <code>sp_playlistcontainer</code>. Of course this implies everything you did with your previous playlist container is
+                | now gone. Especially the attached event handlers - as soon as the V8 garbage collection kicks in, they are lost.
 
-      div.page-header
-        h2 Loading and availability of objects
-      p
-        |libspotify unfortunately does return types that are not fully loaded yet. The metadata_updated callback will be called when <i>some</i> object has been loaded. So node-spotify
-        |will in some cases return objects like playlists and tracks that are not yet loaded. You can use the <a href="#waitForLoaded">waitForLoaded</a> helper method to attach a callback
-        |to when an object becomes loaded.
+            div.page-header
+                h2 Loading and availability of objects
+            p
+                | libspotify unfortunately does return types that are not fully loaded yet. The metadata_updated callback will be called when <i>some</i> object has been loaded. So node-spotify
+                | will in some cases return objects like playlists and tracks that are not yet loaded. You can use the <a href="#waitForLoaded">waitForLoaded</a> helper method to attach a callback
+                | to when an object becomes loaded.
 
 
-      include includes/api/events
-      include includes/api/spotify
-      include includes/api/playlistContainer
-      include includes/api/playlist
-      include includes/api/player
-      include includes/api/track
-      include includes/api/album
-      include includes/api/artist
-      include includes/api/search
-      include includes/api/internal
+            include includes/api/events
+            include includes/api/spotify
+            include includes/api/playlistContainer
+            include includes/api/playlist
+            include includes/api/player
+            include includes/api/track
+            include includes/api/album
+            include includes/api/artist
+            include includes/api/search
+            include includes/api/internal
 
-  h5 Old versions
-  p
-    a.btn(href='api/0.4.1/api.html') 0.4.1
-    a.btn(href='api/0.5.0/api.html') 0.5.0
-    a.btn(href='api/0.5.1/api.html') 0.5.1
-    a.btn(href='api/0.5.2/api.html') 0.5.2
-  script.
-    !function($) {$(function() {window.prettyPrint && prettyPrint()})}(window.jQuery)
+    h5 Old versions
+    p
+        a.btn(href='api/0.4.1/api.html') 0.4.1
+        a.btn(href='api/0.5.0/api.html') 0.5.0
+        a.btn(href='api/0.5.1/api.html') 0.5.1
+        a.btn(href='api/0.5.2/api.html') 0.5.2
+    script.
+        !function($) {$(function() {window.prettyPrint && prettyPrint()})}(window.jQuery)

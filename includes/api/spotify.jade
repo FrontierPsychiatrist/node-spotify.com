@@ -27,7 +27,7 @@ div.page-header
         | With this helper function you can queue the processing of objects that maybe aren't loaded yet to the point where they will be loaded. Internally it uses the
         | libspotify metadata_updated callback to achieve this. The objects in the array may be loaded at different points in time. The callback takes <b>one</b> of the objects
         | as a parameter.
-    span.alert.alert-warning Don't attach too many objects
+    .alert.alert-warning Don't attach too many objects
     p
     p This method will happily iterate over all objects on each metadata_updated call which might be very frequent.
     pre.prettyprint
@@ -72,7 +72,7 @@ div.page-header
     p If the link is not valid, <code>Undefined</code> is returned.
     h4 <a href="#playlistContainer">playlistContainer</a> playlistContainer
     p
-        span.alert.alert-danger Don't access the root playlist container property twice.
+        .alert.alert-danger Don't access the root playlist container property twice.
     p The root playlist container, i.e. the one of the user logged in. Contains methods to access and manage playlists.
     h4 object constants
     p A property containing libspotify constants that are used in some objects.
