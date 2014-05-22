@@ -1,5 +1,6 @@
 *.iml
 .idea/
+atlassian-ide-plugin.xml
 
 builds/
 old/

@@ -75,8 +75,9 @@ playlistContainer.on('playlist_moved', function(err, position, newPosition, /* m
     playlists.splice(newPosition, 0, playlist);
 }</pre></div><div class="page-header"><h2><a id="playlist">Playlists</a></h2><p>The playlist objects are availabe via <a href="#getPlaylists">getPlaylists()</a>.</p><pre class="prettyprint">{
     name: 'Rock music',
-    link: 'spotify:user:1234567890:playlist:6nruasfjdkMMLOas'
-}</pre><h4>string name</h4><p>The name of the playlist.</p><h4>string link</h4><p>The spotify link to the playlist</p><h4><a id="getTracks">track[] getTracks()</a></h4><pre class="prettyprint">var tracks = playlist.getTracks();</pre><p>Returns all <a href="#track">tracks</a> for the playlist. This is available as a method instead of a property
+    link: 'spotify:user:1234567890:playlist:6nruasfjdkMMLOas',
+    collaborative: false
+}</pre><h4>string name</h4><p>The name of the playlist. This property is settable.</p><h4>bool collaborative</h4><p>Flag if the playlist is collaborative. This property is settable.</p><h4>string link</h4><p>The spotify link to the playlist</p><h4><a id="getTracks">track[] getTracks()</a></h4><pre class="prettyprint">var tracks = playlist.getTracks();</pre><p>Returns all <a href="#track">tracks</a> for the playlist. This is available as a method instead of a property
 so it can be controlled when a playlist fetches it tracks from spotify.</p><h4>void addTracks(<a href="#track">track[]</a> tracks, int position)</h4><p>Add the array of tracks after the given position.</p><pre class="prettyprint">var tracks = otherPlaylist.getTracks();
 playlist.addTracks(tracks, 2);</pre><h4>void removeTracks(int[] indices)</h4><p>Remove the tracks at the given indices.</p><pre class="prettyprint">var indices = [0, 4, 5];
 playlist.removeTracks(indices);</pre><h4>void reorderTracks(int[] indices, int newPosition)</h4><p>Reorder tracks. The tracks with the indices will get moved to newPosition. newPosition indicates the new index <i>before</i> anything is actually moved.</p><pre class="prettyprint">var indices = [0,1];
@@ -149,4 +150,4 @@ are meant to provide a way to add methods to the prototype.</p><pre class="prett
 spotify.internal.protos.Track.prototype.foo = function(bar) {...};
 var track = spotify.createFromLink('spotify:track:123');
 track.foo('abc');</pre><p>Unfortunately the methods/properties you add to the prototypes are not seeable when you print an object
-in the NodeJS interpreter, do not get fooled by that.</p></div></div></div><h5>Old versions</h5><p><a href="api/0.4.1/api.html" class="btn">0.4.1</a><a href="api/0.5.0/api.html" class="btn">0.5.0</a><a href="api/0.5.1/api.html" class="btn">0.5.1</a><a href="api/0.5.2/api.html" class="btn">0.5.2</a></p><script>!function($) {$(function() {window.prettyPrint && prettyPrint()})}(window.jQuery)</script></div><footer class="footer"><div class="container"><p>node-spotify by FrontierPsychiatrist</p></div></footer></body></html>
+in the NodeJS interpreter, do not get fooled by that.</p></div></div></div><h5>Old versions</h5><p><a href="api/0.4.1/api.html" class="btn">0.4.1</a><a href="api/0.5.0/api.html" class="btn">0.5.0</a><a href="api/0.5.1/api.html" class="btn">0.5.1</a><a href="api/0.5.2/api.html" class="btn">0.5.2</a><a href="api/0.5.4/api.html" class="btn">0.5.4</a></p><script>!function($) {$(function() {window.prettyPrint && prettyPrint()})}(window.jQuery)</script></div><footer class="footer"><div class="container"><p>node-spotify by FrontierPsychiatrist</p></div></footer></body></html>
