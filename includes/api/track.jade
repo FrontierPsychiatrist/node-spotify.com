@@ -15,26 +15,37 @@ div.page-header
         |    link: 'spotify:track:05JqOBN6XW4eFUVQlgR0I3',
         |    name: 'Murray Ostril:"They Don\'t Sleep Anymore On the Beach"'
         | }
+
     h4 string name
     p The name of the track
+
     h4 album album
     p The <a href="#album">album</a> of the track
+
     h4 artist[] artists
     p All <a href="#artist">artists</a> for this track
+
     h4 boolean starred
     p True if the track is starred. This property is settable.
+
     h4 int popularity
     p The popularity of the song in Spotify.
+
     h4 int duration
     p The duration of the song in seconds.
+
     h4 string link
     p The spotify link to the track
+
     .alert.alert-info The following properties are only available when accessing a track in a playlist.
     h4 <a href='#user'>user</a> creator
     p The user who added the track to the playlist.
+
     h4 date createTime
     p The date when the track was added to the playlist.
+
     h4 bool seen
     p If the track was seen, used in inbox playlists.
+
     h4 string message
     p The message attached to the track, used in inbox playlists.

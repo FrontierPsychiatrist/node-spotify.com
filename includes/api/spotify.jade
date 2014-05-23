@@ -8,11 +8,13 @@ div.page-header
         |     sessionUser: ...,
         |     version: '0.6.0'
         | }
+
     h4 string rememberedUser
     pre.prettyprint
         | console.log(spotify.rememberedUser);
         | //your@email.com
     p The name of the remebered user if present, <code>undefined</code> otherwise.
+
     h4 void login( string username, string password, bool remember, bool useRemembered )
     pre.prettyprint
         | spotify.login('myusername', 'mypassword', true, false);
@@ -20,6 +22,7 @@ div.page-header
         | If <code>remember</code> is set to true, the user will be remembered and can relogin the next time. If
         | <code>useRemembered</code> is set to true, the remembered user will be used.
     p Use the <code>ready</code> callback to know when it is safe to call further methods and access properties.
+
     h4
         a#searchCtor search Search( string searchText, optional int offset, optional int limit )
     p This is a constructor for the <a href="#search">search</a> object. All of the four entities <a href="#track">track</a>
@@ -28,6 +31,7 @@ div.page-header
         | global values for these but they can be set individually on the returned object.
     pre.prettyprint
         | var search = new spotify.Search('godspeed you black emperor', 2, 10);
+
     h4 spotifyObject createFromLink( string link )
     p Creates a spotify object for the given spotify link. Currently playlists, tracks, artists, albums and users are supported.
     pre.prettyprint
@@ -37,10 +41,13 @@ div.page-header
         | var playlist = spotify.createFromLink('spotify:user:spotify_germany:playlist:5w4R5dh4lY71G60lltHUl0');
         | var user = spotify.createFromLink('spotify:user:spotify_germany');
     p If the link is not valid, <code>Undefined</code> is returned.
+
     h4 <a href="#playlistContainer">playlistContainer</a> playlistContainer
     p The root playlist container, i.e. the one of the user logged in.
+
     h4 <a href='#user'>user</a> sessionUser
     p The logged in user. Find your starred playlist here.
+
     h4
         a#waitForLoaded waitForLoaded(object[] objects, function callback)
     p
@@ -66,12 +73,15 @@ div.page-header
     p
         | This example will print the first track of the 14th playlist only when it is available. As Javascript is very dynamic don't forget you can attach own properties to the objects
         | (like the position in this example).
+
     h4 <a href="#player">player</a> player
     p Object to play tracks.See the description of <a href="#player">player</a>.
+
     h4 void logout()
     pre.prettyprint
         | spotify.logout(function callback);
     p Logs the user out. The callback will be called as soon as the log out is done. You can also set the callback with the property <code>spotify.onLogout</code>.
+
     h4 object constants
     p A property containing libspotify constants that are used in some objects.
     pre.prettyprint
@@ -83,8 +93,10 @@ div.page-header
         |     PLAYLIST_TYPE_START_FOLDER: 1,
         |     PLAYLIST_TYPE_END_FOLDER: 2
         | }
+
     h4 string version
     p The version of node-spotify you are using.
+
     h5 Events
     p You can register to the following events on <code>spotify</code> via the <code>on</code> method (unregister via <code>off</code>).
         h6 <code>ready: function()</code>

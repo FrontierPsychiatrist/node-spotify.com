@@ -7,29 +7,30 @@ div.page-header
         | {
         |     currentSecond: 3
         | }
+
     h4 void play(<a href='#track'>track</a> track)
     pre.prettyprint
         | var track = playlist.getTrack(0);
         | spotify.player.play(track);
     p Plays the given track to the end.
+
     h4 void stop()
-    pre.prettyprint
-        | spotify.player.stop();
-    p Stop playing
+    p Stop playing the current track.
+
     h4 void pause()
-    pre.prettyprint
-        | spotify.player.pause();
-    p Pause playing
+    p Pause playing the current track.
+
     h4 void resume()
-    pre.prettyprint
-        | spotify.player.resume();
-    p Resume playing
+    p Resume playing if paused.
+
     h4 void seek(int second)
     p Seek to the given second on the currently playing track.
     pre.prettyprint
         | spotify.player.seek(98);
+
     h4 int currentSecond
     p The the current second of the song playing.
+
     h4 Events
     p You can subscribe to the following events with callback functions
         h6 <code>endOfTrack: function()</code>

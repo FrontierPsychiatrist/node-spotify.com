@@ -15,11 +15,14 @@ div.page-header
         |     didYouMean: 'Godspeed You! Black Emperor',
         |     tracks: [], artists: [], albums: [], playlists: []
         | }
+
     h4 int (track/album/artist/playlist)Offset
     p The offset to use for the search of the corresponding item. E.g. if you want the last 5 tracks when 10 tracks
         | are found in total you set trackOffset to 5 and trackLimit to 5. This property is settable.
+
     h4 int (track/album/artist/playlist)Limit
     p Limits the number of corresponding items in the search. This property is settable.
+
     h4 void execute( function callback )
     p Executes the search. When the search is ready, the callback will be called.
     pre.prettyprint
@@ -28,18 +31,25 @@ div.page-header
         |     console.log(searchResult);
         | });
     p You can modify the offsets and limits and execute the search again.
+
     .alert.alert-info The following properties are available after the call to execute.
     h4 int total(Tracks/Albums/Artists/Playlists)
     p The total number of items found.
+
     h4 string link
     p The spotify link to the search
+
     h4 string didYouMean
     p The spotify did-you-mean text
+
     h4 <a href="#track">track[]</a> tracks
     p Returns the tracks found in the search.
+
     h4 <a href="#album">album[]</a> albums
     p Returns the albums found in the search.
+
     h4 <a href="#artist">artist[]</a> artists
     p Returns the artists found in the search
+
     h4 <a href="#playlist">playlist[]</a> playlists
     p Returns the playlists found in the search.

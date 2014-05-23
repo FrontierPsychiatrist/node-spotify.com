@@ -1,20 +1,28 @@
 div.page-header
     h2
         a#playlistContainer Playlist container
+
     h4 int numPlaylists
     p The number of playlists in this container.
+
     h4 <a href="#playlist">playlist</a> getPlaylist(int index)
     p Returns the playlist at the given index.
+
     h4 <a href="#playlist">playlist[]</a> getPlaylist()
     p All playlists in this playlist container. Use this with care if <code>numPlaylists</code> is large.
+
     h4 void addPlaylist(string name)
     p Create a new playlist. You should access the new playlist via the playlist_added callback.
+
     h4 void addFolder(int position, string name)
     p
         | Adds a new playlist folder at the given position (0-based). This will actually create two special playlists, the folder start and folder end. To put a playlist in
         | the folder, move it beyond the start but before the end. If you want to delete the folder you <b>must</b> delete both elements, otherwise you will have an orphaned element.
+
     h4 void deletePlaylist(int index)
     p Deletes the playlist at the given index (0-based).
+    .alert.alert-warning When deleting folders, make sure to delete the start- and end element.
+
     h4 void movePlaylist(int index, int newPosition)
     p
         | Move the playlist at the index to the given new position. The position is the desired index <i>before</i> anything is moved.
@@ -25,6 +33,7 @@ div.page-header
             li Playlist 3 (index: 2)
         | If you want to move Playlist 1 behind Playlist 2 the desired index is 2, so you call movePlaylist(0,2). If you want to move Playlist 2 before Playlist 1 the desired
         | index is 0, so you call movePlaylist(1, 0).
+
     h5 Events
     p You can register to the following events on a playlist container via the <code>on</code> method (unregister via <code>off</code>).
         h6 <code>playlistAdded: function(err, newPlaylist, position)</code>
