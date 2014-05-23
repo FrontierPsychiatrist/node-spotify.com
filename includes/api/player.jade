@@ -9,7 +9,7 @@ div.page-header
         | }
     h4 void play(<a href='#track'>track</a> track)
     pre.prettyprint
-        | var track = playlist.getTracks()[0];
+        | var track = playlist.getTrack(0);
         | spotify.player.play(track);
     p Plays the given track to the end.
     h4 void stop()
@@ -30,12 +30,10 @@ div.page-header
         | spotify.player.seek(98);
     h4 int currentSecond
     p The the current second of the song playing.
-    h4 events
-    p The following events will be called in the player object:
-        ul
-            li <code>player_end_of_track</code>
-            pre.prettyprint
-                | spotify.player.on(events.player_end_of_track, function(err, player) {
-                |     currentTrack++;
-                |     playNextTrack();
-                | });
+    h4 Events
+    p You can subscribe to the following events with callback functions
+        h6 <code>endOfTrack: function()</code>
+        pre.prettyprint
+            | var endOfTrack = function() {
+            |     console.log('End of track reached');
+            | };

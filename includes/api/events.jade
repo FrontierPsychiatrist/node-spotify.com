@@ -2,30 +2,42 @@ div.page-header
     h2
         a#events Events
     p
-        | On <code>playlist</code> objects and <code>playlistContainer</code> objects you can attach events with the <code>on</code> method. <code>on</code> simply
+        | On <code>playlist</code> objects and <code>playlistContainer</code> objects, the <code>spotify</code> and the <code>player</code> object
+        | you can attach events with the <code>on</code> method. <code>on</code> simply
         | takes an object that has all the events set you want to attach.
     p
         | Careful: <code>on</code> does first remove <i>all</i> old callbacks you had attached and then attach only the ones you provided. So you can not progressively
-        | attach one callback after another, you always have to provide all callbacks you want to attach-
+        | attach one callback after another, you always have to provide all callbacks you want to attach.
+    p If you want to remove the callbacks you simply call <code>off</code> without arguments. There is no way to remove single callbacks. Instead,
+        | remove them and reattach only the ones you want to keep.
     p
         | Be sure to call <code>off</code> when an object goes out of <i>your</i> scope (e.g. if you don't use a playlist anymore). This will immediately remove all
         | callbacks. Otherwise you have to rely on the garbage collector to remove them.
     p The following events are available:
     pre.prettyprint
         | playlist.on({
-        |     playlistRenamed: ...,
-        |     tracksAdded: ...,
-        |     tracksMoved: ...,
-        |     tracksRemoved: ...,
-        |     trackCreatedChanged: ...,
-        |     trackSeenChanged: ...,
-        |     trackMessageChanged: ...
-        | }
+        |     playlistRenamed: function(err, playlist),
+        |     tracksAdded: function(err, playlist, track[], position),
+        |     tracksMoved: function(err, playlist, trackIndices[], newPosition),
+        |     tracksRemoved: function(err, playlist, trackIndices[]),
+        |     trackCreatedChanged: function(err, playlist, position, user, date),
+        |     trackSeenChanged: function(err, playlist, position, seen),
+        |     trackMessageChanged: function(err, playlist, position, message)
+        | });
     pre.prettyprint
         | playlistContainer.on({
-        |     playlistAdded: ...,
-        |     playlistMoved: ...,
-        |     playlistRemoved: ...
-        | }
+        |     playlistAdded: function(err, newPlaylist, position),
+        |     playlistMoved: function(err, position, newPosition),
+        |     playlistRemoved: function(err, position)
+        | });
+    pre.prettyprint
+        | spotify.on({
+        |     ready: function(),
+        |     metadataUpdated: function(),
+        |     logout: function()
+        | });
+    pre.prettyprint
+        | spotify.player.on({
+        |     endOfTrack: function()
+        | });
     p Descriptions for the events can be found in the corresponding objects.
-    p Some other events are available on <code>player</code> and <code>spotify</code>.

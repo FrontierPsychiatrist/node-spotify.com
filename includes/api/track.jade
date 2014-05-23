@@ -1,6 +1,6 @@
 div.page-header
     h2
-        a#track Tracks
+        a#track Track
     p Tracks can be acquired by calling the <a href="#getTracks">getTracks()</a> method on a <a href="#playlist">playlist</a>
     pre.prettyprint
         | { popularity: 40,
@@ -29,3 +29,12 @@ div.page-header
     p The duration of the song in seconds.
     h4 string link
     p The spotify link to the track
+    .alert.alert-info The following properties are only available when accessing a track in a playlist.
+    h4 <a href='#user'>user</a> creator
+    p The user who added the track to the playlist.
+    h4 date createTime
+    p The date when the track was added to the playlist.
+    h4 bool seen
+    p If the track was seen, used in inbox playlists.
+    h4 string message
+    p The message attached to the track, used in inbox playlists.

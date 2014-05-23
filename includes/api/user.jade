@@ -1,0 +1,23 @@
+div.page-header
+    h2
+        a#user User
+    p A spotify user. Apart from the <code>spotify.sessionUser</code> you can create user objects via <code>spotify.createFromLink()</code>
+        | or via the <code>track.creator</code> property in playlists.
+    pre.prettyprint
+        | {
+        |     displayName: 'Moritz Schulze',
+        |     canonicalName: '1122311692',
+        |     link: 'spotify:user:1122311692'
+        |     playlistContainer: ...,
+        |     starredPlaylist: ...
+        | }
+    h4 string displayName
+    p
+    h4 string canonicalName
+    p
+    h4 string link
+    p
+    h4 <a href='#playlistContainer'>playlistContainer</a> playlistContainer
+    p Contains the published playlists of this user.
+    h4 <a href='#playlist'>playlist</a> starredPlaylists
+    p The starred playlist of this user.

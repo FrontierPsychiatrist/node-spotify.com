@@ -1,13 +1,12 @@
 div.page-header
     h2
         a#playlistContainer Playlist container
-    p
-        .alert.alert-danger Don't access the root playlist container property twice.
-    p Like with playlists this can lead to unwanted double execution of callbacks. It's best to save the root playlistcontainer in a variable in the ready callback.
-    h4 <a href="#playlist">playlist[]</a> getPlaylists()
-    p All playlists in this playlist container.
-    h4 <a href="#playlist">playlist</a> getStarred()
-    p The starred playlist of this playlist container.
+    h4 int numPlaylists
+    p The number of playlists in this container.
+    h4 <a href="#playlist">playlist</a> getPlaylist(int index)
+    p Returns the playlist at the given index.
+    h4 <a href="#playlist">playlist[]</a> getPlaylist()
+    p All playlists in this playlist container. Use this with care if <code>numPlaylists</code> is large.
     h4 void addPlaylist(string name)
     p Create a new playlist. You should access the new playlist via the playlist_added callback.
     h4 void addFolder(int position, string name)
@@ -28,15 +27,21 @@ div.page-header
         | index is 0, so you call movePlaylist(1, 0).
     h5 Events
     p You can register to the following events on a playlist container via the <code>on</code> method (unregister via <code>off</code>).
-    pre.prettyprint
-        | playlistContainer.on('playlist_added', function(err, newPlaylist, position) {
-        |     playlists.splice(position, 0, newPlaylist);
-        | }
-        | playlistContainer.on('playlist_removed', function(err, position, /* maybe undefined */ playlist) {
-        |     playlists.splice(position, 1);
-        | }
-        | playlistContainer.on('playlist_moved', function(err, position, newPosition, /* maybe undefined */ _playlist) {
-        |     var playlist = playlists[position];
-        |     playlists.splice(position, 1);
-        |     playlists.splice(newPosition, 0, playlist);
-        | }
+        h6 <code>playlistAdded: function(err, newPlaylist, position)</code>
+        pre.prettyprint
+            | var playlistAdded = function(err, newPlaylist, position) {
+            |     console.log('Playlist added at position ', position);
+            | };
+        p Called when a playlist is added to the container. Be aware that this could also be a playlist folder start/end.
+        h6 <code>playlistMoved: function(err, position, newPosition)</code>
+        pre.prettyprint
+            | var playlistMoved = function(err, position, newPosition) {
+            |     console.log('Playlist at position ', position, ' moved to position ', newPosition);
+            | };
+        p Called when a playlist is moved to a new position in the container.
+        h6 <code>playlistRemoved: function(err, position)</code>
+        pre.prettyprint
+            | var playlistRemoved = function(err, position) {
+            |     console.log('Playlist at position ', position, ' removed');
+            | };
+        p Called when a playlist is removed from the container.

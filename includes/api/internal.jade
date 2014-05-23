@@ -9,8 +9,14 @@ div.page-header
         | are meant to provide a way to add methods to the prototype.
     pre.prettyprint
         | spotify.internal.protos = {
-        |     Track: function()...,
-        |     TrackExtended: function()..., //This is the Track object you get in playlists, extends Track
+        |     Playlist: function(),
+        |     Track: function(),
+        |     TrackExtended: function(), //This is the Track object you get in playlists, extends Track
+        |     PlaylistContainer: function(),
+        |     Artist: function(),
+        |     Album: function(),
+        |     User: function(),
+        |     PlaylistFolder: function()
         | }
         | //This will make the method foo appear on all Track (and TrackExtended) instances.
         | spotify.internal.protos.Track.prototype.foo = function(bar) {...};
