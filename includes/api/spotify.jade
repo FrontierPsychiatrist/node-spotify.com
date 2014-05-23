@@ -120,4 +120,4 @@ div.page-header
         p Called when the user is logged out. This is also directly settable in <code>spotify.logout(callback)</code>.
         h6 <code>metadataUpdated: function()</code>
         p This callback is called whenever new data for a spotify type is loaded. It is internally used in <code><a href='#waitForLoaded'>waitForLoaded</a></code>
-            | and typically is not needed by a user of node-spotify.
+            | and typically is not needed by a user of node-spotify. Even if you attach a callback an internal callback will remain in use.

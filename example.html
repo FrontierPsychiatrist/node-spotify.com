@@ -1,1 +1,33 @@
-<!DOCTYPE html><html><head><link rel="stylesheet" href="css/bootstrap.min.css" media="screen" type="text/css"><link rel="stylesheet" href="css/main.css" media="screen" type="text/css"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta http-equiv="Content-Type" content="text/html" charset="utf-8"><title>node-spotify: example</title><script type="text/javascript" src="js/jquery.min.js"></script><script type="text/javascript" src="js/prettify.js"></script><link rel="stylesheet" href="css/prettify.css" type="text/css"></head><body data-spy="scroll" data-target=".sidebar"><div class="navbar navbar-default"><div class="navbar-header"><a href="index.html" class="navbar-brand">Home</a></div><div class="collapse navbar-collapse"><ul class="nav navbar-nav"><li><a href="api.html">node.js API</a></li><li class="active"><a href="example.html">Examples</a></li><li><a href="programmers.html">Into the C++ code</a></li><li><a href="impressum.html">Impressum</a></li></ul><!--a(href='demo/index.html').btn.btn-success.pull-right Try it!--></div></div><div class="container"><div class="page-header"><h1>Example</h1></div><p>This page shows you some example usages of node-spotify that don't go too far into depth.</p></div><footer class="footer"><div class="container"><p>node-spotify by FrontierPsychiatrist</p></div></footer></body></html>
+<!DOCTYPE html><html><head><link rel="stylesheet" href="css/bootstrap.min.css" media="screen" type="text/css"><link rel="stylesheet" href="css/main.css" media="screen" type="text/css"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta http-equiv="Content-Type" content="text/html" charset="utf-8"><title>node-spotify: example</title><script type="text/javascript" src="js/jquery.min.js"></script><script type="text/javascript" src="js/prettify.js"></script><link rel="stylesheet" href="css/prettify.css" type="text/css"></head><body data-spy="scroll" data-target=".sidebar"><div class="navbar navbar-default"><div class="navbar-header"><a href="index.html" class="navbar-brand">Home</a></div><div class="collapse navbar-collapse"><ul class="nav navbar-nav"><li><a href="api.html">node.js API</a></li><li class="active"><a href="example.html">Examples</a></li><li><a href="programmers.html">Into the C++ code</a></li><li><a href="impressum.html">Impressum</a></li></ul><!--a(href='demo/index.html').btn.btn-success.pull-right Try it!--></div></div><div class="container"><div class="page-header"><h1>Example</h1></div><p>This page shows you some example usages of node-spotify that don't go too far into depth.</p><h2>Basic usage</h2><p>To initalize and use node-spotify correctly follow these steps:</p><ol><li>load node-spotify<pre class="prettyprint">var options = {
+    appkeyFile: './spotify_appkeyFile.key',
+    cacheFolder: 'cache',
+    settingsFolder: 'settings'
+};
+var spotify = require('spotify')(options);</pre></li><li>attach a ready callback<p>This callback is your entry point after login.</p><pre class="prettyprint">var ready = function() {
+    console.log('node-spotify is ready to exeute more code!');
+    //your apps functionality should start here
+};
+spotify.on({
+    ready: ready
+};</pre><p>If you're just playing around in the node interpreter you don't need to use the ready callback, you can just wait for a short time after logging in to execute the next
+command.</p></li><li>login<pre class="prettyprint">spotify.login('user', 'password', false, false);</pre></li><p>All other examples assume you follow the basic usage principle of a node-spotify app. The code listed is to be executed in the ready callback.</p></ol><h2>Access your playlists</h2><p>Playlists are stored in a playlist container. The playlist container of the logged in user is accessible like this:</p><pre class="prettyprint">var myPlaylistContainer = spotify.playlistContainer;</pre><p>The number of playlists is available as a property and you can get single playlists or all as an array. If you have a large number of playlists it is preferrable
+to access only single playlists that you need.</p><pre class="prettyprint">var numPlaylists = myPlaylistContainer.numPlaylists;
+var playlist = myPlaylistContainer.getPlaylist(5);
+var allPlaylists = myPlaylistContainer.getPlaylists();</pre><p>The playlist container does not contain the starred playlist. See the appropriate example for how to get your starred tracks.</p><h2>Access your starred playlist</h2><p>The starred playlist always belongs to a user object. The user object of the logged in user and his/her starred playlist are available like so:</p><pre class="prettyprint">var me = spotify.sessionUser;
+var myNumberOfStarredTracks = me.starredPlaylist.numTracks;
+var myFirstStarredTrack = me.starredPlaylist.getTrack(0);</pre><h2>Play a track</h2><p>Playing a track is really easy.</p><pre class="prettyprint">var track = spotify.sessionUser.starredPlaylist.getTrack(0);
+spotify.player.play(track);</pre><h2>Access the published playlists of a friend</h2><p>First you have to get the link to your friends user object. This can not be done in node-spotify as you can not search for users. You can get it in the official
+Spotify client when right clicking a user and selecting "Copy Spotify URI". With this URI you can do the following</p><pre class="prettyprint">var user = spotify.createFromLink('spotify:user:123456');
+var firstPublishedPlaylist = user.playlistContainer.getPlaylist(0);</pre><h2>Listen to events</h2><p>As an example I will show you how to listen to the renaming of a playlist.</p><pre class="prettyprint">var playlistRenamed = function(err, playlist) {
+    console.log('New name: ', playlist.name);
+};
+var playlist = spotify.playlistContainer.getPlaylist(0);
+playlist.on({
+    playlistRenamed: playlistRenamed
+});</pre><p>Now, if you rename the playlist in the official client you should see the log message.</p><h2>Search for stuff</h2><p>To search with node-spotify you have to create a new search object.</p><pre class="prettyprint">var offset = 0;
+var limit = 10;
+var search = new spotify.Search('search text', offset, limit);</pre><p>The offset and limit are, if set in the constructor used for all the searched object types. You can however adjust them for single types like this:</p><pre class="prettyprint">search.trackOffset = 10;
+search.trackLimit = 5;</pre><p>Finally, execute the search with a callback</p><pre class="prettyprint">var foundTracks;
+search.execute(function(err, searchResult) {
+    foundTracks = searchResult.tracks;
+});</pre><script>!function($) {$(function() {window.prettyPrint && prettyPrint()})}(window.jQuery)</script></div><footer class="footer"><div class="container"><p>node-spotify by FrontierPsychiatrist</p></div></footer></body></html>

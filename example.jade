@@ -10,4 +10,93 @@ block content
     .page-header
         h1 Example
     p This page shows you some example usages of node-spotify that don't go too far into depth.
+    h2 Basic usage
+    p To initalize and use node-spotify correctly follow these steps:
+    ol
+        li load node-spotify
+            pre.prettyprint
+                | var options = {
+                |     appkeyFile: './spotify_appkeyFile.key',
+                |     cacheFolder: 'cache',
+                |     settingsFolder: 'settings'
+                | };
+                | var spotify = require('spotify')(options);
+        li attach a ready callback
+            p This callback is your entry point after login.
+            pre.prettyprint
+                | var ready = function() {
+                |     console.log('node-spotify is ready to exeute more code!');
+                |     //your apps functionality should start here
+                | };
+                | spotify.on({
+                |     ready: ready
+                | };
+            p If you're just playing around in the node interpreter you don't need to use the ready callback, you can just wait for a short time after logging in to execute the next
+                | command.
+        li login
+            pre.prettyprint
+                | spotify.login('user', 'password', false, false);
+        p All other examples assume you follow the basic usage principle of a node-spotify app. The code listed is to be executed in the ready callback.
 
+    h2 Access your playlists
+    p Playlists are stored in a playlist container. The playlist container of the logged in user is accessible like this:
+    pre.prettyprint
+        | var myPlaylistContainer = spotify.playlistContainer;
+    p The number of playlists is available as a property and you can get single playlists or all as an array. If you have a large number of playlists it is preferrable
+        | to access only single playlists that you need.
+    pre.prettyprint
+        | var numPlaylists = myPlaylistContainer.numPlaylists;
+        | var playlist = myPlaylistContainer.getPlaylist(5);
+        | var allPlaylists = myPlaylistContainer.getPlaylists();
+    p The playlist container does not contain the starred playlist. See the appropriate example for how to get your starred tracks.
+
+    h2 Access your starred playlist
+    p The starred playlist always belongs to a user object. The user object of the logged in user and his/her starred playlist are available like so:
+    pre.prettyprint
+        | var me = spotify.sessionUser;
+        | var myNumberOfStarredTracks = me.starredPlaylist.numTracks;
+        | var myFirstStarredTrack = me.starredPlaylist.getTrack(0);
+
+    h2 Play a track
+    p Playing a track is really easy.
+    pre.prettyprint
+        | var track = spotify.sessionUser.starredPlaylist.getTrack(0);
+        | spotify.player.play(track);
+
+    h2 Access the published playlists of a friend
+    p First you have to get the link to your friends user object. This can not be done in node-spotify as you can not search for users. You can get it in the official
+        | Spotify client when right clicking a user and selecting "Copy Spotify URI". With this URI you can do the following
+    pre.prettyprint
+        | var user = spotify.createFromLink('spotify:user:123456');
+        | var firstPublishedPlaylist = user.playlistContainer.getPlaylist(0);
+
+    h2 Listen to events
+    p As an example I will show you how to listen to the renaming of a playlist.
+    pre.prettyprint
+        | var playlistRenamed = function(err, playlist) {
+        |     console.log('New name: ', playlist.name);
+        | };
+        | var playlist = spotify.playlistContainer.getPlaylist(0);
+        | playlist.on({
+        |     playlistRenamed: playlistRenamed
+        | });
+    p Now, if you rename the playlist in the official client you should see the log message.
+
+    h2 Search for stuff
+    p To search with node-spotify you have to create a new search object.
+    pre.prettyprint
+        | var offset = 0;
+        | var limit = 10;
+        | var search = new spotify.Search('search text', offset, limit);
+    p The offset and limit are, if set in the constructor used for all the searched object types. You can however adjust them for single types like this:
+    pre.prettyprint
+        | search.trackOffset = 10;
+        | search.trackLimit = 5;
+    p Finally, execute the search with a callback
+    pre.prettyprint
+        | var foundTracks;
+        | search.execute(function(err, searchResult) {
+        |     foundTracks = searchResult.tracks;
+        | });
+    script.
+            !function($) {$(function() {window.prettyPrint && prettyPrint()})}(window.jQuery)
