@@ -2,6 +2,12 @@ div.page-header
     h2
         a#playlistContainer Playlist container
 
+    pre.prettyprint
+        | {
+        |     numPlaylists: 50,
+        |     owner: ...
+        | }
+
     h4 int numPlaylists
     p The number of playlists in this container.
 
@@ -10,6 +16,9 @@ div.page-header
 
     h4 <a href="#playlist">playlist[]</a> getPlaylist()
     p All playlists in this playlist container. Use this with care if <code>numPlaylists</code> is large.
+
+    h4 <a href='#user'>user</a> owner
+    p The owner of the playlist container.
 
     h4 void addPlaylist(string name)
     p Create a new playlist. You should access the new playlist via the playlist_added callback.

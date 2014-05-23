@@ -12,8 +12,8 @@ block content
         pre.prettyprint
             | var spotify = require('spotify')({ appkeyFile: 'spotify_appkeyFile.key' });
             | var ready = function()  {
-            |     var starredTracks = spotify.sessionUser.starredPlaylist.getTracks();
-            |     spotify.player.play(starredTracks[0]);
+            |     var starredPlaylist = spotify.sessionUser.starredPlaylist;
+            |     spotify.player.play(starredPlaylist.getTrack(0));
             | };
             | spotify.on({
             |     ready: ready

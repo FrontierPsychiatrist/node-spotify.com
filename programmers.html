@@ -5,46 +5,46 @@ provide the classes exported to node.js and Spotify classes call libspotify. A N
 access spotify values in this way.</p><p>As a rule of thumb, a class whichs name starts with Node should never call a libspotify API function directly.</p><h5>Example</h5><p>The following javascript code</p><pre class="prettyprint">track.name</pre><p>needs this in C++</p><pre class="prettyprint">//code behind track.name in Javascript:
 class NodeTrack {
 private:
- std::shared_ptr&lt;Track&gt; track;
+    std::shared_ptr&lt;Track&gt; track;
 public:
- static Handle&lt;Value&gt; getName(Local&lt;String&gt; property, const AccessorInfo&amp; info); //will call track-&gt;name()
+    static Handle&lt;Value&gt; getName(Local&lt;String&gt; property, const AccessorInfo&amp; info); //will call track-&gt;name()
 };
 class Track {
 public:
- std::string name(); //calls libspotify
+    std::string name(); //calls libspotify
 }</pre><h3>Spotify loop</h3><p>The spotify loop is implemented via libuv. libspotify requires that every five minutes or so the function <code>sp_session_process_events</code> must be called. This
 function must also be called when the <code>notify_main_thread</code> callback is triggered. If the callback is triggered, <code>uv_async</code> is used to notify the
 main thread that <code>sp_session_process_events</code> must be called. It must be called in the same thread that the <code>sp_session</code> was created, but <code>notify_main_thread</code>
 is called in another thread and so we cannot call it immediately. After the call to <code>sp_session_process_events</code> a <code>uv_timer</code> is set to call it again.</p><pre class="prettyprint">void SessionCallbacks::init() {
- timer = std::unique_ptr<uv_timer_t>(new uv_timer_t());
- notifyHandle = std::unique_ptr<uv_async_t>(new uv_async_t());
- uv_async_init(uv_default_loop(), notifyHandle.get(), handleNotify);
- uv_timer_init(uv_default_loop(), timer.get());
+    timer = std::unique_ptr<uv_timer_t>(new uv_timer_t());
+    notifyHandle = std::unique_ptr<uv_async_t>(new uv_async_t());
+    uv_async_init(uv_default_loop(), notifyHandle.get(), handleNotify);
+    uv_timer_init(uv_default_loop(), timer.get());
 }
 /**
- * If the timer has run out this method will be called.
- **/
+* If the timer has run out this method will be called.
+**/
 void SessionCallbacks::processEvents(uv_timer_t* timer, int status) {
- handleNotify(notifyHandle.get(), 0);
+    handleNotify(notifyHandle.get(), 0);
 }
 /**
- * This is a callback function that will be called by spotify.
- **/
+* This is a callback function that will be called by spotify.
+**/
 void SessionCallbacks::notifyMainThread(sp_session* session) {
- //effectively calls handleNotify in another thread
- uv_async_send(notifyHandle.get());
+    //effectively calls handleNotify in another thread
+    uv_async_send(notifyHandle.get());
 }
 /**
- * async callback handle function for process events.
- * This function will always be called in the thread in which the sp_session was created.
- **/
+* async callback handle function for process events.
+* This function will always be called in the thread in which the sp_session was created.
+**/
 void SessionCallbacks::handleNotify(uv_async_t* handle, int status) {
- uv_timer_stop(timer.get()); //a new timeout will be set at the end
- int nextTimeout = 0;
- while(nextTimeout == 0) {
-   sp_session_process_events(application->session, &nextTimeout);
- }
- uv_timer_start(timer.get(), &processEvents, nextTimeout, 0);
+    uv_timer_stop(timer.get()); //a new timeout will be set at the end
+    int nextTimeout = 0;
+    while(nextTimeout == 0) {
+        sp_session_process_events(application->session, &nextTimeout);
+    }
+    uv_timer_start(timer.get(), &processEvents, nextTimeout, 0);
 }</pre><h2>FAQ</h2><h4>Aren't you leaking memory? Lots of <code>new Node...*</code>!</h4><p>No. All NodeObjects are created via <code>new</code>, but as soon as <code>->getV8Object()</code> is called and the resulting
 object is returned in a <code>HandleScope</code> the object is attached to the V8 runtime and can be garbage collected. Garbage
 collection will also delete the Node object.</p><script>!function ($) {$(function(){window.prettyPrint && prettyPrint()})}(window.jQuery)</script></div><footer class="footer"><div class="container"><p>node-spotify by FrontierPsychiatrist</p></div></footer></body></html>

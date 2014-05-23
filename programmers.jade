@@ -9,80 +9,80 @@ block stylesheets
 block content
     h1 Programmers section
     p This section is for people who want to dive in the code of the node-spotify module for node.js
-        |It's written in C++ (c++011 standard). The following libraries/frameworks are used and not further explained in this guide:
+        | It's written in C++ (c++011 standard). The following libraries/frameworks are used and not further explained in this guide:
         ul
             li <a href="http://nodejs.org/api/addons.html">node.js native module development</a>, <a href="https://code.google.com/p/v8/">google's V8</a></li>
             li <a href="http://nikhilm.github.com/uvbook/introduction.html">libuv event handling</a>, <a href="https://computing.llnl.gov/tutorials/pthreads/">pthreads</a></li>
             li <a href="https://developer.spotify.com/technologies/libspotify/docs/12.1.45/">libspotify</a></li>
     p The source code is available at
-        |<a href="https://github.com/FrontierPsychiatrist/node-spotify" target="_blank">github</a>
+        | <a href="https://github.com/FrontierPsychiatrist/node-spotify" target="_blank">github</a>
 
     h2 Architecture
     h3 Class structure
     p Two types of classes exist, Spotify classes (src/objects/spotify) and Node classes (src/objects/node). Node classes are in general the ones that
-      |provide the classes exported to node.js and Spotify classes call libspotify. A Node class normally has a weak pointer to an spotify class and can
-      |access spotify values in this way.
+        | provide the classes exported to node.js and Spotify classes call libspotify. A Node class normally has a weak pointer to an spotify class and can
+        | access spotify values in this way.
     p As a rule of thumb, a class whichs name starts with Node should never call a libspotify API function directly.
     h5 Example
     p The following javascript code
     pre.prettyprint
-      |track.name
+        | track.name
     p needs this in C++
     pre.prettyprint
-      |//code behind track.name in Javascript:
-      |class NodeTrack {
-      |private:
-      |  std::shared_ptr&lt;Track&gt; track;
-      |public:
-      |  static Handle&lt;Value&gt; getName(Local&lt;String&gt; property, const AccessorInfo&amp; info); //will call track-&gt;name()
-      |};
-      |class Track {
-      |public:
-      |  std::string name(); //calls libspotify
-      |}
+        | //code behind track.name in Javascript:
+        | class NodeTrack {
+        | private:
+        |     std::shared_ptr&lt;Track&gt; track;
+        | public:
+        |     static Handle&lt;Value&gt; getName(Local&lt;String&gt; property, const AccessorInfo&amp; info); //will call track-&gt;name()
+        | };
+        | class Track {
+        | public:
+        |     std::string name(); //calls libspotify
+        | }
     h3 Spotify loop
     p The spotify loop is implemented via libuv. libspotify requires that every five minutes or so the function <code>sp_session_process_events</code> must be called. This
-      |function must also be called when the <code>notify_main_thread</code> callback is triggered. If the callback is triggered, <code>uv_async</code> is used to notify the
-      |main thread that <code>sp_session_process_events</code> must be called. It must be called in the same thread that the <code>sp_session</code> was created, but <code>notify_main_thread</code>
-      |is called in another thread and so we cannot call it immediately. After the call to <code>sp_session_process_events</code> a <code>uv_timer</code> is set to call it again.
+        | function must also be called when the <code>notify_main_thread</code> callback is triggered. If the callback is triggered, <code>uv_async</code> is used to notify the
+        | main thread that <code>sp_session_process_events</code> must be called. It must be called in the same thread that the <code>sp_session</code> was created, but <code>notify_main_thread</code>
+        | is called in another thread and so we cannot call it immediately. After the call to <code>sp_session_process_events</code> a <code>uv_timer</code> is set to call it again.
     pre.prettyprint
-      |void SessionCallbacks::init() {
-      |  timer = std::unique_ptr<uv_timer_t>(new uv_timer_t());
-      |  notifyHandle = std::unique_ptr<uv_async_t>(new uv_async_t());
-      |  uv_async_init(uv_default_loop(), notifyHandle.get(), handleNotify);
-      |  uv_timer_init(uv_default_loop(), timer.get());
-      |}
-      |/**
-      |  * If the timer has run out this method will be called.
-      |  **/
-      |void SessionCallbacks::processEvents(uv_timer_t* timer, int status) {
-      |  handleNotify(notifyHandle.get(), 0);
-      |}
-      |/**
-      |  * This is a callback function that will be called by spotify.
-      |  **/
-      |void SessionCallbacks::notifyMainThread(sp_session* session) {
-      |  //effectively calls handleNotify in another thread
-      |  uv_async_send(notifyHandle.get());
-      |}
-      |/**
-      |  * async callback handle function for process events.
-      |  * This function will always be called in the thread in which the sp_session was created.
-      |  **/
-      |void SessionCallbacks::handleNotify(uv_async_t* handle, int status) {
-      |  uv_timer_stop(timer.get()); //a new timeout will be set at the end
-      |  int nextTimeout = 0;
-      |  while(nextTimeout == 0) {
-      |    sp_session_process_events(application->session, &nextTimeout);
-      |  }
-      |  uv_timer_start(timer.get(), &processEvents, nextTimeout, 0);
-      |}
+        | void SessionCallbacks::init() {
+        |     timer = std::unique_ptr<uv_timer_t>(new uv_timer_t());
+        |     notifyHandle = std::unique_ptr<uv_async_t>(new uv_async_t());
+        |     uv_async_init(uv_default_loop(), notifyHandle.get(), handleNotify);
+        |     uv_timer_init(uv_default_loop(), timer.get());
+        | }
+        | /**
+        | * If the timer has run out this method will be called.
+        | **/
+        | void SessionCallbacks::processEvents(uv_timer_t* timer, int status) {
+        |     handleNotify(notifyHandle.get(), 0);
+        | }
+        | /**
+        | * This is a callback function that will be called by spotify.
+        | **/
+        | void SessionCallbacks::notifyMainThread(sp_session* session) {
+        |     //effectively calls handleNotify in another thread
+        |     uv_async_send(notifyHandle.get());
+        | }
+        | /**
+        | * async callback handle function for process events.
+        | * This function will always be called in the thread in which the sp_session was created.
+        | **/
+        | void SessionCallbacks::handleNotify(uv_async_t* handle, int status) {
+        |     uv_timer_stop(timer.get()); //a new timeout will be set at the end
+        |     int nextTimeout = 0;
+        |     while(nextTimeout == 0) {
+        |         sp_session_process_events(application->session, &nextTimeout);
+        |     }
+        |     uv_timer_start(timer.get(), &processEvents, nextTimeout, 0);
+        | }
 
     h2 FAQ
     h4 Aren't you leaking memory? Lots of <code>new Node...*</code>!
     p No. All NodeObjects are created via <code>new</code>, but as soon as <code>->getV8Object()</code> is called and the resulting
-      |object is returned in a <code>HandleScope</code> the object is attached to the V8 runtime and can be garbage collected. Garbage
-      |collection will also delete the Node object.
+        | object is returned in a <code>HandleScope</code> the object is attached to the V8 runtime and can be garbage collected. Garbage
+        | collection will also delete the Node object.
 
     script.
         !function ($) {$(function(){window.prettyPrint && prettyPrint()})}(window.jQuery)
