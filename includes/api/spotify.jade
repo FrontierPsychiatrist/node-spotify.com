@@ -1,6 +1,8 @@
 div.page-header
     h2
         a#spotify The spotify object
+    p This is the object that is returned when you call the function returned by <code>require('spotify')</code>. It's your central point
+        | of interaction with node-spotify.
     pre.prettyprint
         | {
         |     rememberedUser: '',
@@ -33,9 +35,10 @@ div.page-header
         | var search = new spotify.Search('godspeed you black emperor', 2, 10);
 
     h4 spotifyObject createFromLink( string link )
-    p Creates a spotify object for the given spotify link. Currently playlists, tracks, artists, albums and users are supported.
+    p Creates a spotify object for the given spotify link. Currently playlists, tracks (also local), artists, albums and users are supported.
     pre.prettyprint
         | var track = spotify.createFromLink('spotify:track:05JqOBN6XW4eFUVQlgR0I3');
+        | var localTrack = spotify.createFromLink('spotify:local:Martin+O%27Donell+%26+Michael+Salvatori:Halo+3%3a+ODST+Original+Soundtrack:Overture:338');
         | var album = spotify.createFromLink('spotify:album:2rT82YYlV9UoxBYLIezkRq');
         | var artist = spotify.createFromLink('spotify:artist:4svpOyfmQKuWpHLjgy4cdK');
         | var playlist = spotify.createFromLink('spotify:user:spotify_germany:playlist:5w4R5dh4lY71G60lltHUl0');
@@ -91,7 +94,8 @@ div.page-header
         |     ARTISTBROWSE_NO_ALBUMS: 2,
         |     PLAYLIST_TYPE_PLAYLIST: 0,
         |     PLAYLIST_TYPE_START_FOLDER: 1,
-        |     PLAYLIST_TYPE_END_FOLDER: 2
+        |     PLAYLIST_TYPE_END_FOLDER: 2,
+        |     PLAYLIST_TYPE_PLACEHOLDER: 3
         | }
 
     h4 string version
@@ -99,10 +103,13 @@ div.page-header
 
     h5 Events
     p You can register to the following events on <code>spotify</code> via the <code>on</code> method (unregister via <code>off</code>).
-        h6 <code>ready: function()</code>
+        h6 <code>ready: function(err)</code>
         pre.prettyprint
             | var playlist;
-            | var ready = function() {
+            | var ready = function(err) {
+            |     if(err) {
+            |       console.log(err);
+            |     }
             |     console.log('spotify is ready!');
             |     playlist = spotify.playlistContainer.getPlaylist(0);
             | };
@@ -121,3 +128,11 @@ div.page-header
         h6 <code>metadataUpdated: function()</code>
         p This callback is called whenever new data for a spotify type is loaded. It is internally used in <code><a href='#waitForLoaded'>waitForLoaded</a></code>
             | and typically is not needed by a user of node-spotify. Even if you attach a callback an internal callback will remain in use.
+        h6 <code>playTokenLost: function()</code>
+        pre.prettyprint
+            | var playTokenLost = function() {
+            |   console.log('The play token has been lost.');
+            | };
+        p This callback is called when another spotify application starts to play with the same account while node-spotify is playing.
+         | It can be used to notify the user. The player will be in a paused state when this is called, you can use
+         | <code>spotify.player.resume()</code> to regain the play token.

@@ -1,0 +1,31 @@
+div.page-header
+    h2
+        a#audio-handlers Audio handlers
+    p You can select between two audio handlers. This should be done only once directly after startup.
+    h3 Native audio handler
+    p This is the default audio handler. It uses a platforms audio to play music with the <a href="#player">player</a>.
+        | On OSX it uses OpenAL, on Linux ALSA. Windows is not supported.
+    p You can select to use this audio handler by calling <code>spotify.useNativeAudio()</code>. This is enabled by default. This audio
+        | handler is the same that was in version 0.6.0, so if you use it you don't have to do anything.
+    p You can disable it completely by compiling with <code>--native_audio=false</code>.
+
+    h3 NodeJS audio handler&nbsp;
+        span.label.label-warning experimental
+    p The NodeJS audio handler enables you to handle the audio in JavaScript. If you compile with <code>--native_audio=false</code>
+        | it's your only choice and the <a href="#player">player</a> won't work until you enable it. You have to enable it
+        | manually since it takes an argument.
+    p This audio handler is <b>experimental</b> since version 0.7.0. If you encounter bugs, please report them.
+    p To use the NodeJS audio handler use the following code
+    pre.prettyprint
+        | var resumeFunction = spotify.useNodjsAudio(handleAudio);
+        | function handleAudio(err, buffer) {
+        |   if(err) throw err;
+        |   var needMoreData = true;
+        |   // write buffer somewhere, set needMoreData
+        |   // if necessary call resumeFunction();
+        |   return needMoreData;
+        | }
+    p You have to pass a callback that gets an error (currently always undefined) and a <a href="http://nodejs.org/api/buffer.html" target="NEW">buffer</a>
+        | and returns true if more data should be sent or false if no more data is needed at the moment. <code>useNodejsAudio</code> returns a
+        | function that you can use to reenable sending of data if you have previously returned false from the callback.
+    p Currently pause, seek and stop support is not very good for this audio handler.

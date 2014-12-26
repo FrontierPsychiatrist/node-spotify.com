@@ -11,6 +11,7 @@ div.page-header
         |     playlistOffset: 0, playlistOffset, 10,
         |     //available after execute:
         |     totalTracks: 19, totalAlbums: 5, totalArtists: 1, totalPlaylists: 7,
+        |     numTracks: 10, numAlbums: 5, numAlbums: 1, numPlaylists: 7,
         |     link: 'spotify:search:godspeed+you+black+emperor'
         |     didYouMean: 'Godspeed You! Black Emperor',
         |     tracks: [], artists: [], albums: [], playlists: []
@@ -34,7 +35,10 @@ div.page-header
 
     .alert.alert-info The following properties are available after the call to execute.
     h4 int total(Tracks/Albums/Artists/Playlists)
-    p The total number of items found.
+    p The total number of items found. Browse them by setting offset and limit.
+
+    h4 int num(Tracks/Albums/Artists/Playlists)
+    p The number of items in this search object.
 
     h4 string link
     p The spotify link to the search
@@ -42,14 +46,26 @@ div.page-header
     h4 string didYouMean
     p The spotify did-you-mean text
 
-    h4 <a href="#track">track[]</a> tracks
+    h4 <a href="#track">track[]</a> tracks <span class="label label-warning">deprecated</span>
     p Returns the tracks found in the search.
 
-    h4 <a href="#album">album[]</a> albums
+    h4 <a href="#track">track</a> getTrack(int position)
+    p Returns the track at the given position.
+
+    h4 <a href="#album">album[]</a> albums <span class="label label-warning">deprecated</span>
     p Returns the albums found in the search.
 
-    h4 <a href="#artist">artist[]</a> artists
+    h4 <a href="#album">album</a> getAlbum(int position)
+    p Returns the album at the given position.
+
+    h4 <a href="#artist">artist[]</a> artists <span class="label label-warning">deprecated</span>
     p Returns the artists found in the search
 
-    h4 <a href="#playlist">playlist[]</a> playlists
+    h4 <a href="#artist">artist</a> getArtist(int position)
+    p Returns the artist at the given position.
+
+    h4 <a href="#playlist">playlist[]</a> playlists <span class="label label-warning">deprecated</span>
     p Returns the playlists found in the search.
+
+    h4 <a href="#playlist">playlist</a> getPlaylist(int position)
+    p Returns the playlist at the given position.

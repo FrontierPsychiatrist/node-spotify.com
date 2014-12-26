@@ -17,6 +17,8 @@ block content
                     li
                         a(href='#spotify') Spotify object
                     li
+                        a(href='#audio-handlers') Audio handlers
+                    li
                         a(href='#playlistContainer') Playlist container
                     li
                         a(href='#playlist') Playlist
@@ -36,7 +38,7 @@ block content
                         a(href='#internal') Internals
         .col-lg-10
             div.page-header
-                h1 node.js API (0.6.0)
+                h1 node.js API (0.7.0)
             p As every other node.js module you just require node-spotify to use it. It returns a function that you can pass
                 | some options. The tracefile won't be created if you just leave it out.
             p The appkeyFile option is required. You need an appkey from Spotify to use node-spotify, you can get it from
@@ -69,6 +71,7 @@ block content
 
             include includes/api/events
             include includes/api/spotify
+            include includes/api/audioHandlers
             include includes/api/playlistContainer
             include includes/api/playlist
             include includes/api/player
@@ -86,5 +89,6 @@ block content
         a.btn(href='api/0.5.1/api.html') 0.5.1
         a.btn(href='api/0.5.2/api.html') 0.5.2
         a.btn(href='api/0.5.4/api.html') 0.5.4
+        a.btn(href='api/0.6.0/api.html') 0.6.0
     script.
         !function($) {$(function() {window.prettyPrint && prettyPrint()})}(window.jQuery)
