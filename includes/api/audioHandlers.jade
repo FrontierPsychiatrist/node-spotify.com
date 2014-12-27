@@ -10,7 +10,7 @@ div.page-header
     p You can disable it completely by compiling with <code>--native_audio=false</code>.
 
     h3 NodeJS audio handler&nbsp;
-        span.label.label-warning experimental
+        span.label.label-info experimental
     p The NodeJS audio handler enables you to handle the audio in JavaScript. If you compile with <code>--native_audio=false</code>
         | it's your only choice and the <a href="#player">player</a> won't work until you enable it. You have to enable it
         | manually since it takes an argument.
@@ -28,4 +28,9 @@ div.page-header
     p You have to pass a callback that gets an error (currently always undefined) and a <a href="http://nodejs.org/api/buffer.html" target="NEW">buffer</a>
         | and returns true if more data should be sent or false if no more data is needed at the moment. <code>useNodejsAudio</code> returns a
         | function that you can use to reenable sending of data if you have previously returned false from the callback.
+    p The buffer object has three additional properties:
+    pre.prettyprint
+        | buffer.numberOfSamples = 4096;
+        | buffer.sampleRate = 44100;
+        | buffer.channels = 2;
     p Currently pause, seek and stop support is not very good for this audio handler.

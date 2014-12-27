@@ -53,6 +53,9 @@ block content
                 | var spotify = require('spotify')(options);
             p This will create a Spotify session but perform no further action with it.
             .alert.alert-info Unless specifically mentioned, properties of objects are not writeable (you can't change a track name in Spotify).
+            p Methods and properties marked with <span class="label label-warning">deprecated</span> will be removed from future releases.
+                | Sections marked with <span class="label label-info">experimental</span> are parts of node-spotify that I know
+                | don't work correctly for all use cases. Please report bugs/enhancements when they don't meet your requirements.
 
             div.page-header
                 h2 Caching of the JavaScript wrapper objects
