@@ -1,11 +1,14 @@
 doctype html
 - var active = 'home'
 - var pages = {api: 'node.js API', example: 'Examples', programmers: 'Into the C++ code',  impressum: 'Impressum'}
+- var api_versions = [ '0.6.0', '0.5.4', '0.5.2', '0.5.1', '0.5.0', '0.4.1']
 block vars
 html
     head
         link(rel='stylesheet', href='css/bootstrap.min.css', media='screen', type='text/css')
         link(rel='stylesheet', href='css/main.css', media='screen', type='text/css')
+        script(type='text/javascript', src='js/jquery.min.js')
+        script(type='text/javascript', src='js/bootstrap.min.js')
         meta(name='viewport', content='width=device-width, initial-scale=1.0')
         meta(http-equiv='Content-Type', content='text/html', charset='utf-8')
         title node-spotify: #{active}
@@ -18,11 +21,18 @@ html
             .collapse.navbar-collapse
                 ul.nav.navbar-nav
                     each name, page in pages
-                        if page == active
-                            li.active
-                                a(href="#{page}.html")=name
+                        if page == 'api'
+                            li(class=active === 'api' ? 'active dropdown' : 'dropdown')
+                                a(href='#', data-toggle='dropdown', role='button', class='dropdown-toggle')
+                                    | API <span class="caret"></span>
+                                ul(role="menu").dropdown-menu
+                                    li
+                                        a(href="api.html")='current (0.7.0)'
+                                    each api_version in api_versions
+                                        li
+                                            a(href='api/' + api_version + '/api.html')=api_version
                         else
-                            li
+                            li(class=active === page ? 'active' : '')
                                 a(href="#{page}.html")=name
                 //a(href='demo/index.html').btn.btn-success.pull-right Try it!
         .container

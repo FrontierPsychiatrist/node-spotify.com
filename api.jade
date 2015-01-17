@@ -2,8 +2,6 @@ extends base/layout
 block vars
     - var active='api'
 block scripts
-    script(type='text/javascript', src='js/jquery.min.js')
-    script(type='text/javascript', src='js/bootstrap.min.js')
     script(type='text/javascript', src='js/prettify.js')
 block stylesheets
     link(rel='stylesheet', href='css/prettify.css', type='text/css')
@@ -85,13 +83,5 @@ block content
             include includes/api/search
             include includes/api/internal
 
-    h5 Old versions
-    p
-        a.btn(href='api/0.4.1/api.html') 0.4.1
-        a.btn(href='api/0.5.0/api.html') 0.5.0
-        a.btn(href='api/0.5.1/api.html') 0.5.1
-        a.btn(href='api/0.5.2/api.html') 0.5.2
-        a.btn(href='api/0.5.4/api.html') 0.5.4
-        a.btn(href='api/0.6.0/api.html') 0.6.0
     script.
         !function($) {$(function() {window.prettyPrint && prettyPrint()})}(window.jQuery)
