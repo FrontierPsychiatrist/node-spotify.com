@@ -49,3 +49,14 @@ div.page-header
 
     h4 string message
     p The message attached to the track, used in inbox playlists.
+
+    h4 int availability
+    p The availability of the track. See <code>spotify.constants</code> for named values:
+    pre.prettyprint
+      | spotify.constants = {
+      |   ...,
+      |   SP_TRACK_AVAILABILITY_UNAVAILABLE: 0,
+      |   SP_TRACK_AVAILABILITY_AVAILABLE: 1,
+      |   SP_TRACK_AVAILABILITY_NOT_STREAMABLE: 2,
+      |   SP_TRACK_AVAILABILITY_BANNED_BY_ARTIST: 3
+      | }

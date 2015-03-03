@@ -1,7 +1,7 @@
 doctype html
 - var active = 'home'
 - var pages = {api: 'node.js API', example: 'Examples', programmers: 'Into the C++ code',  impressum: 'Impressum'}
-- var api_versions = [ '0.6.0', '0.5.4', '0.5.2', '0.5.1', '0.5.0', '0.4.1']
+- var api_versions = [ '0.7.0', '0.6.0', '0.5.4', '0.5.2', '0.5.1', '0.5.0', '0.4.1']
 block vars
 html
     head
@@ -27,7 +27,7 @@ html
                                     | API <span class="caret"></span>
                                 ul(role="menu").dropdown-menu
                                     li
-                                        a(href="api.html")='current (0.7.0)'
+                                        a(href="api.html")='current (0.7.1)'
                                     each api_version in api_versions
                                         li
                                             a(href='api/' + api_version + '/api.html')=api_version
