@@ -4,9 +4,13 @@ After you understand these examples it is best to look into the <a href='api.htm
     cacheFolder: 'cache',
     settingsFolder: 'settings'
 };
-var spotify = require('spotify')(options);</pre></li><li>attach a ready callback<p>This callback is your entry point after login.</p><pre class="prettyprint">var ready = function() {
-    console.log('node-spotify is ready to exeute more code!');
-    //your apps functionality should start here
+var spotify = require('spotify')(options);</pre></li><li>attach a ready callback<p>This callback is your entry point after login.</p><pre class="prettyprint">var ready = function(err) {
+    if(err) {
+        console.log('Login failed', err);
+    } else {
+        console.log('node-spotify is ready to exeute more code!');
+        //your apps functionality should start here
+    }
 };
 spotify.on({
     ready: ready

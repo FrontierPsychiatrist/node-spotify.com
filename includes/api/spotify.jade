@@ -8,7 +8,7 @@ div.page-header
         |     rememberedUser: '',
         |     playlistContainer: ...,
         |     sessionUser: ...,
-        |     version: '0.6.0'
+        |     version: '0.7.1'
         | }
 
     h4 string rememberedUser
@@ -108,10 +108,12 @@ div.page-header
             | var playlist;
             | var ready = function(err) {
             |     if(err) {
+            |       // error logging in!
             |       console.log(err);
+            |     } else {
+            |       console.log('spotify is ready!');
+            |       playlist = spotify.playlistContainer.getPlaylist(0);
             |     }
-            |     console.log('spotify is ready!');
-            |     playlist = spotify.playlistContainer.getPlaylist(0);
             | };
             | spotify.on({
             |     ready: ready
@@ -119,6 +121,7 @@ div.page-header
             | spotify.login('user', 'password', false, false);
         p Called when it is safe to execute further actions on the <code>spotify</code> object after login. Internally this is called after the
             | <code>root_playlistcontainer</code> has been loaded. This is your typical entry point for all your app code.
+        p If there was an error logging in, the <code>ready</code> callback will be called with an error string.
         h6 <code>logout: function()</code>
         pre.prettyprint
             | var logout = function() {

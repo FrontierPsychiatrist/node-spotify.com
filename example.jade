@@ -25,9 +25,13 @@ block content
         li attach a ready callback
             p This callback is your entry point after login.
             pre.prettyprint
-                | var ready = function() {
-                |     console.log('node-spotify is ready to exeute more code!');
-                |     //your apps functionality should start here
+                | var ready = function(err) {
+                |     if(err) {
+                |         console.log('Login failed', err);
+                |     } else {
+                |         console.log('node-spotify is ready to exeute more code!');
+                |         //your apps functionality should start here
+                |     }
                 | };
                 | spotify.on({
                 |     ready: ready

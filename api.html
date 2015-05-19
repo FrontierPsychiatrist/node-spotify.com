@@ -40,7 +40,7 @@ of interaction with node-spotify.</p><pre class="prettyprint">{
     rememberedUser: '',
     playlistContainer: ...,
     sessionUser: ...,
-    version: '0.6.0'
+    version: '0.7.1'
 }</pre><h4>string rememberedUser</h4><pre class="prettyprint">console.log(spotify.rememberedUser);
 //your@email.com</pre><p>The name of the remebered user if present, <code>undefined</code> otherwise.</p><h4>void login( string username, string password, bool remember, bool useRemembered )</h4><pre class="prettyprint">spotify.login('myusername', 'mypassword', true, false);</pre><p>Starts a spotify session and logs in. Facebook login is possible. The user must have a spotify premium account.
 If <code>remember</code> is set to true, the user will be remembered and can relogin the next time. If
@@ -78,16 +78,18 @@ spotify.waitForLoaded([playlist], waitForTrack);</pre><p>This example will print
 }</pre><h4>string version</h4><p>The version of node-spotify you are using.</p><h5>Events</h5><p>You can register to the following events on <code>spotify</code> via the <code>on</code> method (unregister via <code>off</code>).<h6><code>ready: function(err)</code></h6><pre class="prettyprint">var playlist;
 var ready = function(err) {
     if(err) {
+      // error logging in!
       console.log(err);
+    } else {
+      console.log('spotify is ready!');
+      playlist = spotify.playlistContainer.getPlaylist(0);
     }
-    console.log('spotify is ready!');
-    playlist = spotify.playlistContainer.getPlaylist(0);
 };
 spotify.on({
     ready: ready
 });
 spotify.login('user', 'password', false, false);</pre><p>Called when it is safe to execute further actions on the <code>spotify</code> object after login. Internally this is called after the
-<code>root_playlistcontainer</code> has been loaded. This is your typical entry point for all your app code.</p><h6><code>logout: function()</code></h6><pre class="prettyprint">var logout = function() {
+<code>root_playlistcontainer</code> has been loaded. This is your typical entry point for all your app code.</p><p>If there was an error logging in, the <code>ready</code> callback will be called with an error string.</p><h6><code>logout: function()</code></h6><pre class="prettyprint">var logout = function() {
     console.log('Logged out');
 };</pre><p>Called when the user is logged out. This is also directly settable in <code>spotify.logout(callback)</code>.</p><h6><code>metadataUpdated: function()</code></h6><p>This callback is called whenever new data for a spotify type is loaded. It is internally used in <code><a href='#waitForLoaded'>waitForLoaded</a></code>
 and typically is not needed by a user of node-spotify. Even if you attach a callback an internal callback will remain in use.</p><h6><code>playTokenLost: function()</code></h6><pre class="prettyprint">var playTokenLost = function() {
